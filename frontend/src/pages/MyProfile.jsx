@@ -2,6 +2,7 @@ import React, { useContext, useEffect, useState } from "react";
 import axios from "axios"; // Assuming you're using Axios
 import { assets } from "../assets/assets";
 import { AppContext } from "../context/AppContext";
+import { toast } from "react-toastify";
 
 export default function MyProfile() {
   const { token, backendUrl, setToken, userID } = useContext(AppContext);
@@ -40,6 +41,7 @@ export default function MyProfile() {
             },
           }
         );
+        console.log(updatedResponse.data)
         setFiles(updatedResponse.data.data.uploadedFiles);
         setUserData({
           userID: userID,
@@ -64,7 +66,7 @@ export default function MyProfile() {
     const fetchUserData = async () => {
       try {
         setLoading(true);
-        console.log("userID is...", userID);
+        
         const response = await axios.get(
           `${backendUrl}/api/user/profile/${userID}`,
           {
@@ -149,11 +151,12 @@ export default function MyProfile() {
         formData.append("uploadedFiles", file);
       });
       /// consoling form data
-      console.log("FormData contents:are....");
-      for (const [key, value] of formData.entries()) {
+      console.log("FormData contents:are....",);
+      for (const [key, value] of uploadedFiles.entries()) {
         console.log(`${key}:`, value);
       }
-      const response = await axios.post(
+      
+      const {data} = await axios.post(
         `${backendUrl}/api/user/update-profile`,
         formData,
         {
@@ -163,6 +166,12 @@ export default function MyProfile() {
           },
         }
       );
+      console.log("hiii",data)
+      if(data.success){
+        toast.success(data.message)
+      }
+      
+      
       setLoading(false);
       setUploadedFiles([]);
       setMessage("Profile updated successfully!");
@@ -199,7 +208,7 @@ export default function MyProfile() {
     }
   };
   useEffect(() => {
-    console.log("Updated info:", info);
+    
   }, [info]);
   console.log("kmdkcmm...", files);
   return (
@@ -336,47 +345,7 @@ export default function MyProfile() {
         )}
       </div>
       {/* upload report end */}
-      {/* all reports */}
-     {/* <div className="mt-8">
-  <p className="text-neutral-500 underline mb-3">All Reports</p>
-  <div className="space-y-4">
-    {files.length > 0 ? (
-      files.map((file, index) => (
-        <div
-          key={index}
-          className="flex items-center justify-between p-2 bg-gray-100 rounded-md shadow-sm"
-        >
-          <div>
-            <p className="font-medium text-gray-700 truncate max-w-xs">
-              {file.fileName || `Report ${index + 1}`}
-            </p>
-            <p className="text-sm text-gray-500">{file.type}</p>
-          </div>
-          <div className="flex items-center space-x-4">
-            
-            <a
-              href={file.url || "#"}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="text-blue-500 text-sm hover:underline"
-            >
-              View
-            </a>
-           
-            <button
-              onClick={() => handleDeleteFile(index)}
-              className="text-red-500 text-sm hover:underline"
-            >
-              Delete
-            </button>
-          </div>
-        </div>
-      ))
-    ) : (
-      <p className="text-gray-500">No reports available to display.</p>
-    )}
-  </div>
-</div> */}
+      
 <div className="mt-8">
   <p className="text-neutral-500 underline mb-3">All Reports</p>
   <div className="space-y-4">
@@ -393,16 +362,17 @@ export default function MyProfile() {
             <p className="text-sm text-gray-500">{file.type}</p>
           </div>
           <div className="flex items-center space-x-4">
-            {/* View button */}
+           
             <a
-              href={file.url || "#"}
+              href={`${backendUrl}/middlewares/${file.filePath}`}
               target="_blank"
               rel="noopener noreferrer"
               className="text-blue-500 text-sm hover:underline"
+              // onClick={() => handleViewFile(file.filePath)}
             >
               View
             </a>
-            {/* Delete button */}
+            
             <button
               onClick={() => handleDeleteFile(index, file._id)} // Assuming each file has a unique _id
               className="text-red-500 text-sm hover:underline"

@@ -5,12 +5,20 @@ import { AdminContext } from '../context/AdminContext'
 import {useNavigate} from 'react-router-dom'
 export default function Navbar() {
     const{aToken,setAToken}=useContext(AdminContext)
+    
 const navigate = useNavigate()
 
 const logOut=()=>{
     navigate('/')
-aToken && setAToken('')
-aToken && localStorage.removeItem('aToken')
+    if (aToken) {
+      setAToken('')
+      localStorage.removeItem('aToken')
+    }
+    const dToken = localStorage.getItem('dToken')
+    if (dToken) {
+      localStorage.removeItem('dToken')
+    }
+    window.location.reload()
 }
 
   return (

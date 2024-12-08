@@ -4,9 +4,11 @@ const doctorModel = require('../models/doctorModel')
 const UserProfile = require('../models/userAppointment.Model')
 const bcrypt = require("bcrypt");
 const path = require("path");
+const cloudinary = require("cloudinary").v2; // For image upload, if using cloudinary
 const fs = require("fs");
+const mongoose = require("mongoose")
 dotenv.config();
-// admin login
+
 const verifyAdminLogin = (req, res) => {
 
   const { email, password } = req.body;
@@ -35,11 +37,9 @@ const verifyAdminLogin = (req, res) => {
     return res.json({ message: "Invalid credentials" });
   }
 };
-
-
-
-// Add a new doctor
+// add new doctor
 const addDoctor = async (req, res) => {
+  console.log(req.body)
   try {
     console.log("hiii")
     const {
@@ -49,6 +49,7 @@ const addDoctor = async (req, res) => {
       experience,
       fees,
       about,
+      isHeadDoctor,
       speciality,
       degree,
       address1,
@@ -76,6 +77,7 @@ const addDoctor = async (req, res) => {
       password: hashedPassword,
       experience,
       fees,
+      isHeadDoctor,
       about,
       speciality,
       degree,
@@ -139,146 +141,23 @@ const getAllAppointments = async (req, res) => {
     return res.status(500).json({ success: false, message: "Internal server error", error: error.message });
   }
 };
-
-
-// const update appointment status
-// const updateAppointmentStaus=async(req,res)=>{
-
-//   try{
-//     const users = await UserProfile.find({ "appointments.0": { $exists: true } });
-
-//     if (!users || users.length === 0) {
-//       return res.status(404).json({ success: false, message: "No appointments found" });
-//     }
-//     const results = users.map(user => {
-//       return {
-//         // userId: user._id,
-//         // name: user.name,
-//         // email: user.email,
-//         // phone: user.phone,
-//         // address: user.address,
-//         // gender: user.gender,
-//         // dob: user.dob,
-//         // uploadedFiles: user.uploadedFiles,
-//         appointments: user.appointments, // Include all appointments for the user
-//       };
-
-//     });
-//     console.log(results)
-//   }catch(error){
-
-//   }
-// }
-
-
-// const updateAppointmentStatus = async (req, res) => {
-//   try {
-//     // Fetch users with appointments
-//     const users = await UserProfile.find({ "appointments.0": { $exists: true } });
-
-//     if (!users || users.length === 0) {
-//       return res.status(404).json({ success: false, message: "No appointments found" });
-//     }
-
-//     // Use map to iterate over users and appointments
-//     const updatePromises = users.map(async (user) => {
-//       // For each user, map through their appointments
-//       const appointmentUpdates = user.appointments.map(async (appointment) => {
-//         const appointmentId = appointment._id;  // Assuming each appointment has an '_id'
-//         const newStatus = req.body.status;  // Assume the new status is in the request body
-
-//         // Update the status of each appointment
-//         const updatedAppointment = await UserProfile.updateOne(
-//           { "appointments._id": appointmentId },
-//           {
-//             $set: { "appointments.$.status": newStatus }
-//           }
-//         );
-
-//         if (updatedAppointment.nModified === 0) {
-//           console.log(`Appointment with ID ${appointmentId} not found or status already updated.`);
-//         } else {
-//           console.log(`Appointment with ID ${appointmentId} updated successfully.`);
-//         }
-//       });
-
-//       // Wait for all appointment updates to complete
-//       await Promise.all(appointmentUpdates);
-//     });
-
-//     // Wait for all users and their appointments to be updated
-//     await Promise.all(updatePromises);
-
-//     // Respond with success
-//     res.status(200).json({ success: true, message: "Appointments updated successfully" });
-
-//   } catch (error) {
-//     console.error("Error updating appointments:", error);
-//     res.status(500).json({ success: false, message: "Error updating appointments" });
-//   }
-// }
-
-// const updateAppointmentStatus = async (req, res) => {
-//   try {
-//     // Fetch users with appointments
-//     const users = await UserProfile.find({ "appointments.0": { $exists: true } });
-
-//     if (!users || users.length === 0) {
-//       return res.status(404).json({ success: false, message: "No appointments found" });
-//     }
-
-//     // Use map to iterate over users and appointments
-//     const updatePromises = users.map(async (user) => {
-//       // For each user, map through their appointments
-//       const appointmentUpdates = user.appointments.map(async (appointment) => {
-//         const appointmentId = appointment._id;  // Assuming each appointment has an '_id'
-//         const newStatus = req.body.status;      // The new status from the request body
-//         const doctorFee = req.body.doctorFee;   // The new doctorFee from the request body
-//         const doctorName = req.body.doctorName; // The new doctorName from the request body
-//         const docId = req.body.docId;           // The new docId from the request body
-
-//         // Update the appointment with the new fields
-//         const updatedAppointment = await UserProfile.updateOne(
-//           { "appointments._id": appointmentId },
-//           {
-//             $set: {
-//               "appointments.$.status": newStatus,
-//               "appointments.$.doctorFee": doctorFee,
-//               "appointments.$.doctorName": doctorName,
-//               "appointments.$.docId": docId
-//             }
-//           }
-//         );
-
-//         if (updatedAppointment.nModified === 0) {
-//           console.log(`Appointment with ID ${appointmentId} not found or status already updated.`);
-//         } else {
-//           console.log(`Appointment with ID ${appointmentId} updated successfully.`);
-//         }
-//       });
-
-//       // Wait for all appointment updates to complete
-//       await Promise.all(appointmentUpdates);
-//     });
-
-//     // Wait for all users and their appointments to be updated
-//     await Promise.all(updatePromises);
-
-//     // Respond with success
-//     res.status(200).json({ success: true, message: "Appointments updated successfully" });
-
-//   } catch (error) {
-//     console.error("Error updating appointments:", error);
-//     res.status(500).json({ success: false, message: "Error updating appointments" });
-//   }
-// }
+const removeDoctorWithId= async(req,res)=>{
+  const { id } = req.params;
+  try {
+    await doctorModel.findByIdAndDelete(id); // Delete the doctor by ID
+    res.status(200).json({ message: "Doctor deleted successfully." });
+  } catch (error) {
+    console.error("Error deleting doctor:", error);
+    res.status(500).json({ message: "Failed to delete doctor." });
+  }
+}
 
 const updateAppointmentStatus = async (req, res) => {
+  
   try {
     const { appointmentId } = req.params;  // Get the appointmentId from the URL
-    const { status, doctorFee, doctorName, docId } = req.body;  // Get the fields from the request body
-console.log(appointmentId,status, doctorFee, doctorName, docId)
-    // Find the user whose appointment matches the given appointmentId
+    const { status, doctorFee,details,selectedFiles, docId } = req.body;  // Get the fields from the request body
+ // Find the user whose appointment matches the given appointmentId
     const user = await UserProfile.findOne({ "appointments._id": appointmentId });
 
     if (!user) {
@@ -291,12 +170,11 @@ console.log(appointmentId,status, doctorFee, doctorName, docId)
     if (!appointment) {
       return res.status(404).json({ success: false, message: "Appointment not found" });
     }
-
-    // Update the appointment fields
+// Update the appointment fields
     appointment.status = status || appointment.status;  // Update status if provided, else keep the old status
     appointment.doctorFee = doctorFee || appointment.doctorFee;  // Update doctorFee if provided
-    appointment.doctorName = doctorName || appointment.doctorName;  // Update doctorName if provided
-    appointment.docId = docId || appointment.docId;  // Update docId if provided
+    // appointment.doctorName = doctorName || appointment.doctorName;  // Update doctorName if provided
+    appointment.doctor = docId || appointment.docId;  // Update docId if provided
 
     // Save the updated user document
     await user.save();
@@ -309,6 +187,172 @@ console.log(appointmentId,status, doctorFee, doctorName, docId)
     res.status(500).json({ success: false, message: "Error updating appointment" });
   }
 };
+const getDoctorById = async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    const doctor = await doctorModel.findById(id);
+
+    if (!doctor) {
+      return res.status(404).json({ success: false, message: "Doctor not found" });
+    }
+
+    res.status(200).json({ success: true, doctor });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ success: false, error: "Internal Server Error" });
+  }
+};
+
+const updateDoctor = async (req, res) => {
+const{id} = req.params
+
+  try {
+    // Destructure the request body
+    const {
+      name,
+      email,
+      password,
+      experience,
+      fees,
+      about,
+      speciality,
+      degree,
+      address1,
+      address2,
+    } = req.body;
+
+    const doctor = await doctorModel.findById(id);
+    if (!doctor) {
+      return res.status(404).json({ success: false, error: "Doctor not found" });
+    }
+
+    // Check if the doctor is updating their password
+    if (password) {
+      // Hash the new password (you can use bcrypt to hash it before saving)
+      doctor.password = password; // Hash password before saving
+    }
+
+    // If a new image is uploaded, handle it
+    if (req.file) {
+      // If you are using Cloudinary
+      const result = await cloudinary.uploader.upload(req.file.path, {
+        folder: "doctor_images", // Cloudinary folder
+      });
+
+      // Remove the old image if there's any (for cloud storage or local)
+      if (doctor.profileImage) {
+        // If the profile image is already stored in Cloudinary
+        const imageId = doctor.profileImage.split("/").pop().split(".")[0]; // Extract image ID
+        await cloudinary.uploader.destroy(imageId); // Delete old image from Cloudinary
+      }
+
+      // Save the new image URL
+      doctor.profileImage = result.secure_url;
+    }
+
+    // Update doctor fields with new data
+    doctor.name = name || doctor.name;
+    doctor.email = email || doctor.email;
+    doctor.experience = experience || doctor.experience;
+    doctor.fees = fees || doctor.fees;
+    doctor.about = about || doctor.about;
+    doctor.speciality = speciality || doctor.speciality;
+    doctor.degree = degree || doctor.degree;
+    doctor.address1 = address1 || doctor.address1;
+    doctor.address2 = address2 || doctor.address2;
+
+    // Save the updated doctor details
+    await doctor.save();
+
+    res.status(200).json({ success: true, message: "Doctor details updated successfully", doctor });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ success: false, error: "An error occurred while updating doctor details" });
+  }
+};
+
+
+
+
+
+
+
+
+const assignDoctor = async (req, res) => {
+  const { docId } = req.params; // Extract doctor ID from URL
+  const { patient, appointmentDetails } = req.body;
+
+  console.log("Details are", patient, appointmentDetails);
+
+  try {
+    // 1. Find the doctor by ID
+    const doctor = await doctorModel.findById(docId);
+    if (!doctor) {
+      return res.status(404).json({ success: false, message: "Doctor not found" });
+    }
+
+    // 2. Extract the patientId, appointmentId, and patientReports
+    const patientId = patient.patientId || patient._id; // Use either patientId or _id
+    const appointmentId = appointmentDetails.appointmentId;
+
+    // Validate selectedFiles and ensure they're in the correct format
+    // if (!appointmentDetails.selectedFiles || appointmentDetails.selectedFiles.length === 0) {
+    //   return res.status(400).json({ success: false, message: "No files uploaded" });
+    // }
+
+    // Transform `selectedFiles` into the required format
+    const patientReports = appointmentDetails.selectedFiles.map((file) => {
+      const fileExtension = file.split('.').pop(); // Extract file extension
+      let fileType;
+
+      // Determine the file type based on the extension
+      if (['mp4', 'mkv'].includes(fileExtension)) fileType = 'video';
+      else if (['mp3', 'wav'].includes(fileExtension)) fileType = 'audio';
+      else if (['pdf'].includes(fileExtension)) fileType = 'pdf';
+      else if (['jpg', 'jpeg', 'png', 'gif'].includes(fileExtension)) fileType = 'image';
+      else throw new Error(`Unsupported file type for file: ${file}`);
+
+      // Here, you should make sure the file is uploaded to your server or cloud storage
+      // and that `filePath` correctly points to the uploaded file.
+      // For example, if you're storing files locally, you might append the path like:
+      const filePath = `/uploads/${file}`;  // Update with actual file path where it's stored.
+
+      return { fileType, filePath };
+    });
+
+    console.log("Reports are", patientReports);
+
+    // 3. Check if the appointment already exists and update it
+    const existingAppointmentIndex = doctor.appointments.findIndex(
+      (appointment) => appointment.appointmentId.toString() === appointmentId
+    );
+
+    if (existingAppointmentIndex !== -1) {
+      // If the appointment exists, update its details
+      doctor.appointments[existingAppointmentIndex].patientId = patientId;
+      doctor.appointments[existingAppointmentIndex].patientReports = patientReports;
+    } else {
+      // If it does not exist, add it as a new appointment
+      doctor.appointments.push({
+        patientId,
+        appointmentId,
+        patientReports,
+      });
+    }
+
+    // 4. Save the updated doctor document
+    await doctor.save();
+
+    res.status(200).json({ success: true, message: "Doctor assigned successfully", doctor });
+  } catch (error) {
+    console.error("Error assigning doctor:", error);
+    res.status(500).json({ success: false, message: error.message });
+  }
+};
+
+
+
 
 
 
@@ -321,5 +365,9 @@ module.exports = {
   addDoctor,
   getAllDoctors,
   getAllAppointments,
-  updateAppointmentStatus
+  updateAppointmentStatus,
+  assignDoctor,
+  removeDoctorWithId,
+  getDoctorById,
+  updateDoctor
 }

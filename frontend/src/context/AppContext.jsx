@@ -36,6 +36,13 @@ const getAllAppointments = async () => {
     toast.error(error.message);
   }
 };
+const getAllDoctor=async()=>{
+  try{
+const {data}=await axios.get(`${backendUrl}/`)
+  }catch(error){
+
+  }
+}
 
 
 const value = {

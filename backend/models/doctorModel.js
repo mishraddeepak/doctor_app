@@ -1,4 +1,38 @@
 const mongoose = require("mongoose");
+const UserProfile=require('./userAppointment.Model')
+const appointmentSchema = new mongoose.Schema({
+  patientId: { 
+    type: mongoose.Schema.Types.ObjectId, 
+    ref: "UserProfile", // Reference to the Patient model 
+    required: true 
+  },
+  appointmentId: { 
+    type: mongoose.Schema.Types.ObjectId, 
+    required: true 
+  },
+  patientReports:  [
+    {
+      fileType: { 
+        type: String, 
+        enum: ["audio", "video", "pdf", "image"], // Allowed types
+        required: true // Ensures file type is provided
+      },
+      filePath: { 
+        type: String, // Path or URL to the file
+        required: true // Ensures file path is provided
+      },
+      description: { 
+        type: String, // Optional description of the report
+        default: "No description provided" 
+      },
+      uploadedAt: { 
+        type: Date, 
+        default: Date.now // Automatically set the upload timestamp
+      }
+    }
+  ]
+}, { timestamps: true });
+
 
 const doctorSchema = new mongoose.Schema({
   name: { type: String, required: true },
@@ -9,9 +43,11 @@ const doctorSchema = new mongoose.Schema({
   about: { type: String },
   speciality: { type: String, required: true },
   degree: { type: String, required: true },
+  isHeadDoctor: { type: Boolean, default: false },
   address1: { type: String, required: true },
   address2: { type: String },
   docImg: { type: String }, // Stores the uploaded image path or URL
+  appointments:[appointmentSchema]
 }, {
   timestamps: true, // Automatically adds createdAt and updatedAt fields
 });

@@ -274,8 +274,9 @@ console.log(adminUrl)
             {/* Admin/Doctor Button in Mobile View */}
             <NavLink
               className="border border-primary text-primary bg-transparent px-6 py-2 rounded-full font-light text-sm"
-              onClick={() => setShoMenu(false)}
-              to="/admin-login"
+              // onClick={() => setShoMenu(false)}
+              onClick={() => window.open(adminUrl, "_self")}
+              to="#"
             >
               <p>Admin/Doctor</p>
             </NavLink>

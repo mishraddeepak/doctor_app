@@ -1,29 +1,19 @@
 const mongoose = require("mongoose");
-
-// {
-//     appointmentId,
-    
-//     docId: selectedDoctor._id,
-//     doctorName: selectedDoctor.name,
-//     doctorFee: fee || selectedDoctor.fees,
-//   },
-
+const doctorModel = require('./doctorModel')
 const appointmentSchema = new mongoose.Schema({
-    // doctorId: { type: mongoose.Schema.Types.ObjectId, ref: 'Doctor' ,default: "123" },
-    docId:{type:String} ,
-    doctorName: {type:String},
-    doctorName:{type:String} ,
-    doctorFee: {type:String} ,
+    doctor: { 
+        type: mongoose.Schema.Types.ObjectId, 
+        ref: 'Doctor', 
+        default: new mongoose.Types.ObjectId('507f1f77bcf86cd799439011')  // Use a valid ObjectId here
+    },
     slotTime: { type: String, required: true },
     symptoms: { type: String, required: true },
-    selectedDate:{type:String,required:true},
-    // uploadedFiles: [{fileName: String,filePath: String,},],
+    selectedDate:{type:String},
+    priscription:{type:String},
+    instruction:{type:String},
     bookedAt: { type: Date, default: Date.now },
-    // status: { type: String, enum: ["pending", "accepted", "canceled"], default: "pending" },
     status: {type: String, enum: ["Pending", "Accepted", "Canceled","Completed"], default: "Pending"} 
    },{timestamps:true});
-
-// Define the UserProfile schema
 const userProfileSchema = new mongoose.Schema(
     {   name: { type: String, required: true },
         email: { type: String, required: true, },

@@ -1,7 +1,7 @@
 const bcrypt = require('bcrypt')
-const userModel = require('../models/userModel')
-const jwt = require('jsonwebtoken')
 
+const jwt = require('jsonwebtoken')
+const userModel = require('../models/userModel')
 
 
 ////api to register

@@ -1,6 +1,6 @@
 const express = require('express')
 const { registerUser, loginUser, getUserByID } = require('../controllers/userController')
-const { createUserProfile, bookAppointment, getUserProfile, deleteUserFile }
+const { createUserProfile, bookAppointment, getUserProfile, deleteUserFile, updateUserProfile }
     = require('../controllers/userAppointmentController')
 const UserProfile = require('../models/userAppointment.Model')
 const multer = require('multer');
@@ -14,13 +14,15 @@ userRouter.post('/login', loginUser)
 // Booking the appoint ment for the user based upon the userID or _.id
 userRouter.post('/book-appointment/:userID',verifyToken,  upload.none(), bookAppointment)
 // after the login updating the profile with submission of the reports
-userRouter.post('/update-profile', verifyToken, uploadFiles, createUserProfile)
+userRouter.post('/update-profile', uploadFiles, createUserProfile)
+
+
 // deleting the report submitted
 userRouter.delete('/information/delete/:userID', verifyToken, deleteUserFile)
 
 
 userRouter.get('/profile/:userID', getUserByID)
-userRouter.get('/information/:userID', verifyToken, getUserProfile)
+userRouter.get('/information/:userID',  getUserProfile)
 
 
 

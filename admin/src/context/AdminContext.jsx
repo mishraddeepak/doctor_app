@@ -13,11 +13,12 @@ export default function AdminContextProvider(props) {
   const [completeData, setCompleteData] = useState([]);
 
   const backendUrl = import.meta.env.VITE_BACKEND_URL;
+  
   const getAllDoctors = async () => {
     try {
       const { data } = await axios.get(`${backendUrl}/api/admin/all-doctors`);
       if (data.success) {
-        console.log(data.doctors);
+        
         setDoctors(data.doctors);
       } else {
         toast.error(data.message);
@@ -43,7 +44,20 @@ export default function AdminContextProvider(props) {
       toast.error(error.message);
     }
   };
+  const deleteDoctor = async (doctorId) => {
+    try {
+      await axios.delete(`${backendUrl}/api/admin//remove-doctor/${doctorId}`, {
+        headers: { Authorization: `Bearer ${aToken}` },
+      });
 
+      // Remove the deleted doctor from state
+      setDoctors((prevDoctors) => prevDoctors.filter((doc) => doc._id !== doctorId));
+      alert("Doctor deleted successfully!");
+    } catch (error) {
+      console.error("Error deleting doctor:", error);
+      alert("Failed to delete the doctor.");
+    }
+  };
   const value = {
     aToken,
     setAToken,
@@ -53,6 +67,7 @@ export default function AdminContextProvider(props) {
     completeData,
     setCompleteData,
     getAllAppointments,
+    deleteDoctor
 
   };
 

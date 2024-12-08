@@ -8,6 +8,7 @@ function MyAppointments() {
 
   useEffect(() => {
     const fetchData = async () => {
+     
       try {
         const response = await axios.get(
           `${backendUrl}/api/user/information/${userID}`,
@@ -17,7 +18,7 @@ function MyAppointments() {
             },
           }
         );
-
+console.log(response.data.data)
         // Sort appointments by selectedDate and slotTime
         const sortedAppointments = response.data.data.appointments.sort(
           (a, b) => {
@@ -28,6 +29,7 @@ function MyAppointments() {
         );
 
         setAppointments(sortedAppointments);
+       
       } catch (error) {
         console.error(error);
       }
@@ -155,6 +157,13 @@ function MyAppointments() {
                   </div>
                 </div>
                 {/* Symptoms Section */}
+                {item.symptoms && (
+                  <div className="bg-gray-50 p-4 rounded-md">
+                    <p className="font-semibold text-gray-700">Symptoms:</p>
+                    <p className="text-sm text-gray-600">{item.symptoms}</p>
+                  </div>
+                )}
+                {/* Doctor Assigned */}
                 {item.symptoms && (
                   <div className="bg-gray-50 p-4 rounded-md">
                     <p className="font-semibold text-gray-700">Symptoms:</p>
