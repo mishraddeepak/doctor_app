@@ -5,7 +5,7 @@ import { AppContext } from "../../context/AppContext";
 import axios from "axios";
 import { AdminContext } from "../../context/AdminContext";
 import { toast } from "react-toastify";
-import { FaRupeeSign } from "react-icons/fa";
+// import { FaRupeeSign } from "react-icons/fa";
 export default function AddDoctor() {
   const [docImg, setDocImg] = useState(null);
   const [name, setName] = useState("");
@@ -157,7 +157,7 @@ export default function AddDoctor() {
             <div className="flex-1 flex flex-col gap-1">
               <p>Fees:</p>
               <div className="relative">
-                <FaRupeeSign className="absolute top-1/2 -left-0 transform -translate-y-1/2 text-gray-500 text-sm" />
+                {/* <FaRupeeSign className="absolute top-1/2 -left-0 transform -translate-y-1/2 text-gray-500 text-sm" /> */}
                 <input
                   className="border rounded px-3 py-2"
                   type="number"
