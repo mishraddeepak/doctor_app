@@ -182,10 +182,37 @@ export default function UpdateDoctor() {
             value={speciality}
             onChange={(e) => setSpeciality(e.target.value)}
           >
-            <option value="General Physician">General Physician</option>
-            <option value="Gynecologist">Gynecologist</option>
-            <option value="Pediatricians">Pediatricians</option>
-          </select>
+          <option value="General Physician">General Physician</option>
+<option value="Gynecologist">Gynecologist</option>
+<option value="Pediatrician">Pediatrician</option>
+<option value="Cardiologist">Cardiologist</option>
+<option value="Dermatologist">Dermatologist</option>
+<option value="Endocrinologist">Endocrinologist</option>
+<option value="Gastroenterologist">Gastroenterologist</option>
+<option value="Neurologist">Neurologist</option>
+<option value="Oncologist">Oncologist</option>
+<option value="Orthopedic Surgeon">Orthopedic Surgeon</option>
+<option value="Ophthalmologist">Ophthalmologist</option>
+<option value="Psychiatrist">Psychiatrist</option>
+<option value="Pulmonologist">Pulmonologist</option>
+<option value="Radiologist">Radiologist</option>
+<option value="Urologist">Urologist</option>
+<option value="Anesthesiologist">Anesthesiologist</option>
+<option value="Rheumatologist">Rheumatologist</option>
+<option value="Nephrologist">Nephrologist</option>
+<option value="Pathologist">Pathologist</option>
+<option value="Hematologist">Hematologist</option>
+<option value="ENT Specialist">ENT Specialist</option>
+<option value="Plastic Surgeon">Plastic Surgeon</option>
+<option value="General Surgeon">General Surgeon</option>
+<option value="Dentist">Dentist</option>
+<option value="Chiropractor">Chiropractor</option>
+<option value="Physiotherapist">Physiotherapist</option>
+<option value="Dietitian/Nutritionist">Dietitian/Nutritionist</option>
+<option value="Speech Therapist">Speech Therapist</option>
+<option value="Occupational Therapist">Occupational Therapist</option>
+<option value="Psychologist">Psychologist</option>
+<option value="Obstetrician">Obstetrician</option></select>
         </div>
 
         <div className="mb-4">

@@ -108,7 +108,7 @@ export default function Appointment() {
     getAllAppointments();
     } catch (error) {
       console.error("Error booking appointment:", error);
-      alert("Failed to book appointment.");
+      alert("Please Update Your Profile to book appointment.");
     } finally {
       setLoading(false);
     }
