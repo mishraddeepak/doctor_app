@@ -40,33 +40,36 @@ export default function AllAppointments() {
   // const handleFileSelection = (appointmentId, fileName) => {
   //   setSelectedFiles((prevState) => {
   //     const prevFiles = prevState[appointmentId] || [];
-  //     if (prevFiles.includes(fileName)) {
-  //       return {
-  //         ...prevState,
-  //         [appointmentId]: prevFiles.filter((file) => file !== fileName),
-  //       };
-  //     } else {
-  //       return {
-  //         ...prevState,
-  //         [appointmentId]: [...prevFiles, fileName],
-  //       };
+  //     const updatedFiles = prevFiles.includes(fileName)
+  //       ? prevFiles.filter((file) => file !== fileName) // Remove file
+  //       : [...prevFiles, fileName]; // Add file
+  // console.log("fie section")
+  //     // If no files are selected, remove the key for the appointment
+  //     if (updatedFiles.length === 0) {
+  //       const { [appointmentId]: _, ...remainingState } = prevState;
+  //       return remainingState;
   //     }
+
+  //     return {
+  //       ...prevState,
+  //       [appointmentId]: updatedFiles,
+  //     };
   //   });
   // };
 
-  const handleFileSelection = (appointmentId, fileName) => {
+  const handleFileSelection = (appointmentId, fileId) => {
     setSelectedFiles((prevState) => {
       const prevFiles = prevState[appointmentId] || [];
-      const updatedFiles = prevFiles.includes(fileName)
-        ? prevFiles.filter((file) => file !== fileName) // Remove file
-        : [...prevFiles, fileName]; // Add file
-  console.log("fie section")
+      const updatedFiles = prevFiles.includes(fileId)
+        ? prevFiles.filter((file) => file !== fileId) // Remove file by ID
+        : [...prevFiles, fileId]; // Add file by ID
+
       // If no files are selected, remove the key for the appointment
       if (updatedFiles.length === 0) {
         const { [appointmentId]: _, ...remainingState } = prevState;
         return remainingState;
       }
-  
+
       return {
         ...prevState,
         [appointmentId]: updatedFiles,
@@ -74,127 +77,37 @@ export default function AllAppointments() {
     });
   };
 
-  // const handleSubmit = async (appointmentId) => {
-  //   if (!selectedDoctor) {
-  //     alert("Please select a doctor.");
-  //     return;
-  //   }
-
-  //   const fee = document.getElementById(`fee-${appointmentId}`).value;
-  //   const status = document.getElementById(`status-${appointmentId}`).value;
-
-  //   // Get the appointment details
-  //   const appointment = completeData
-  //     .flatMap((patient) => patient.appointments)
-  //     .find((app) => app._id === appointmentId);
-
-  //   // Ensure the appointment exists
-  //   if (!appointment) {
-  //     alert("Appointment not found.");
-  //     return;
-  //   }
-
-  //   // Find the corresponding patient for the appointment
-  //   const patient = completeData.find((patient) =>
-  //     patient.appointments.some((app) => app._id === appointmentId)
-  //   );
-
-  //   // Ensure the patient exists
-  //   if (!patient) {
-  //     alert("Patient not found.");
-  //     return;
-  //   }
-
-  //   // Extract patient details
-  //   const patientDetails = {
-  //     _id: patient.userId, // Patient's userId (unique identifier)
-  //     name: patient.name || "Unknown",
-  //     email: patient.email || "Unknown",
-  //     phone: patient.phone || "Unknown",
-  //     address: patient.address || { line1: "Unknown", line2: "Unknown" },
-  //     gender: patient.gender || "Unknown",
-  //     dob: patient.dob || "Unknown",
-  //   };
-
-  //   // Prepare appointment info
-  //   const appointmentDetails = {
-  //     appointmentId,
-  //     status,
-  //     docId: selectedDoctor._id,
-  //     // doctorName: selectedDoctor.name,
-  //     doctorFee: fee || selectedDoctor.fees,
-  //     // symptoms: appointment.symptoms,
-  //     details: appointment.details || "No additional details provided.",
-  //     selectedFiles: selectedFiles[appointmentId] || [],
-  //   };
-
-  //   try {
-  //     console.log("helllo", appointmentDetails);
-  //     // First API request to update appointment details
-  //     console.log("appointment Id", appointmentId);
-  //     await axios.post(
-  //       `${backendUrl}/api/admin/appointment-status/${appointmentId}`,
-  //       appointmentDetails
-  //       // {
-  //       //   headers: { Authorization: `Bearer ${aToken}` },
-  //       // }
-  //     );
-  //     // Second API request to send patient and appointment info
-  //     // console.log("selected docId",selectedDoctor._id)
-  //     await axios.post(
-  //       `${backendUrl}/api/admin/assign-doctor/${selectedDoctor._id}`,
-
-  //       {
-  //         patient: patientDetails,
-  //         appointmentDetails,
-  //       }
-  //       // {
-  //       //   headers: { Authorization: `Bearer ${aToken}` },
-  //       // }
-  //     );
-
-  //     alert("Appointment and patient details updated successfully!");
-  //     getAllAppointments(); // Refresh the appointments list
-  //   } catch (error) {
-  //     console.error(
-  //       "Error updating appointment or sending patient info:",
-  //       error
-  //     );
-  //     alert("Failed to update appointment or send patient info.");
-  //   }
-  // };
-
   const handleSubmit = async (appointmentId) => {
     if (!selectedDoctor) {
       alert("Please select a doctor.");
       return;
     }
-  
+
     const fee = document.getElementById(`fee-${appointmentId}`).value;
     const status = document.getElementById(`status-${appointmentId}`).value;
-  
+
     // Get the appointment details
     const appointment = completeData
       .flatMap((patient) => patient.appointments)
       .find((app) => app._id === appointmentId);
-  
+
     // Ensure the appointment exists
     if (!appointment) {
       alert("Appointment not found.");
       return;
     }
-  
+
     // Find the corresponding patient for the appointment
     const patient = completeData.find((patient) =>
       patient.appointments.some((app) => app._id === appointmentId)
     );
-  
+
     // Ensure the patient exists
     if (!patient) {
       alert("Patient not found.");
       return;
     }
-  
+
     // Extract patient details
     const patientDetails = {
       _id: patient.userId, // Patient's userId (unique identifier)
@@ -204,27 +117,27 @@ export default function AllAppointments() {
       address: patient.address || { line1: "Unknown", line2: "Unknown" },
       gender: patient.gender || "Unknown",
       dob: patient.dob || "Unknown",
+      // selectedFiles: selectedFiles[appointmentId] || [], // Optional file selection
     };
-  
+    console.log("selected doctor", selectedDoctor);
     // Prepare appointment info
     const appointmentDetails = {
       appointmentId,
       status,
+      docName: selectedDoctor.name,
       docId: selectedDoctor._id,
-      doctorFee: fee || selectedDoctor.fees,
+      docFee: fee || selectedDoctor.fees,
       details: appointment.details || "No additional details provided.",
       selectedFiles: selectedFiles[appointmentId] || [], // Optional file selection
     };
-  
+    console.log("Appointment Details:", appointmentDetails);
     try {
-      console.log("Appointment Details:", appointmentDetails);
-      
       // First API request to update appointment details
-     const {data}= await axios.post(
+      const { data } = await axios.post(
         `${backendUrl}/api/admin/appointment-status/${appointmentId}`,
         appointmentDetails
       );
-      console.log("edjnd")
+      console.log(data);
       // Second API request to send patient and appointment info
       await axios.post(
         `${backendUrl}/api/admin/assign-doctor/${selectedDoctor._id}`,
@@ -233,7 +146,7 @@ export default function AllAppointments() {
           appointmentDetails,
         }
       );
-  
+      console.log("hii");
       alert("Appointment and patient details updated successfully!");
       getAllAppointments(); // Refresh the appointments list
     } catch (error) {
@@ -244,8 +157,6 @@ export default function AllAppointments() {
       alert("Failed to update appointment or send patient info.");
     }
   };
-  
-
 
   let serialNumber = 1;
 
@@ -327,6 +238,7 @@ export default function AllAppointments() {
                       }`}
                     >
                       {appointment.status}
+                     
                     </p>
 
                     <div className="flex items-center justify-center sm:justify-start gap-2">
@@ -353,116 +265,148 @@ export default function AllAppointments() {
                           </p>
                         </div>
 
-                       {/* File Selection with Dropdown */}
-<div className="mt-4">
-  <label className="block mb-2 font-medium">Available Files:</label>
-  <div className="relative">
-    <button
-      type="button"
-      className="w-full sm:w-auto p-2 border rounded-md bg-white text-gray-700"
-      onClick={() => toggleFileDropdown(appointment._id)}
-    >
-      {selectedFiles[appointment._id]?.length > 0
-        ? `${selectedFiles[appointment._id].length} file(s) selected`
-        : "Select files (optional)"}
-    </button>
+                        {/* Assigned Doctor And Fee */}
+                        <div className="mb-4 ">
+                          <p className="font-medium">
+                            Assigned Doctor: <span className="text-sm">{appointment.docName|| "Doctor Not Yet assigned"}</span>
+                          </p>
+                          <p className="font-medium">
+                            Appointment Fee:
+                            <span>
+                              {appointment.docFee  ||
+                                "No  provided."}
+                            </span>
+                          </p >
+                        </div>
 
-    {expandedDropdown === appointment._id && (
-      <div className="absolute mt-2 w-full sm:w-auto max-h-40 overflow-y-auto border rounded-md bg-white shadow-lg z-10">
-        {patient.uploadedFiles && patient.uploadedFiles.length > 0 ? (
-          <ul className="p-2">
-            {patient.uploadedFiles.map((file) => (
-              <li key={file.fileName} className="flex items-center gap-2">
-                <input
-                  type="checkbox"
-                  className="form-checkbox"
-                  checked={(selectedFiles[appointment._id] || []).includes(file.fileName)}
-                  onChange={() =>
-                    handleFileSelection(appointment._id, file.fileName)
-                  }
-                />
-                <label>
-                  {file.fileName}
-                  <a
-                    href={`${backendUrl}/middlewares/${file.filePath}`}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="text-blue-500 text-sm hover:underline mx-3"
-                  >
-                    View
-                  </a>
-                </label>
-              </li>
-            ))}
-          </ul>
-        ) : (
-          <p className="p-2 text-gray-500">
-            No files available for this appointment.
-          </p>
-        )}
-      </div>
-    )}
-  </div>
-</div>
+                        {/* File Selection with Dropdown */}
+                        <div className="mt-4">
+                          <label className="block mb-2 font-medium">
+                            Available Reports:
+                          </label>
+                          <div className="relative">
+                            <button
+                              type="button"
+                              className="w-full sm:w-auto p-2 border rounded-md bg-white text-gray-700"
+                              onClick={() =>
+                                toggleFileDropdown(appointment._id)
+                              }
+                            >
+                              {selectedFiles[appointment._id]?.length > 0
+                                ? `${
+                                    selectedFiles[appointment._id].length
+                                  } Report(s) selected`
+                                : "Select Reports (optional)"}
+                            </button>
 
-{/* Doctor Selection and Fee */}
-<div className="mt-4">
-  <label className="block font-medium">Doctor</label>
-  <select
-    value={selectedDoctor?.name || ""}
-    onChange={(e) => {
-      const doctor = doctors.find((doc) => doc.name === e.target.value);
-      setSelectedDoctor(doctor);
-    }}
-    className="p-2 border rounded-md w-full sm:w-auto"
-  >
-    <option value="" disabled>
-      Select a doctor
-    </option>
-    {doctors.map((doctor) => (
-      <option key={doctor._id} value={doctor.name}>
-        {doctor.name} ({doctor.speciality})
-      </option>
-    ))}
-  </select>
-</div>
+                            {expandedDropdown === appointment._id && (
+                              <div className="absolute mt-2 w-full sm:w-auto max-h-40 overflow-y-auto border rounded-md bg-white shadow-lg z-10">
+                                {patient.uploadedFiles &&
+                                patient.uploadedFiles.length > 0 ? (
+                                  <ul className="p-2">
+                                    {patient.uploadedFiles.map((file) => (
+                                      <li
+                                        key={file._id}
+                                        className="flex items-center gap-2"
+                                      >
+                                        <input
+                                          type="checkbox"
+                                          className="form-checkbox"
+                                          checked={(
+                                            selectedFiles[appointment._id] || []
+                                          ).includes(file._id)}
+                                          onChange={() =>
+                                            handleFileSelection(
+                                              appointment._id,
+                                              file._id
+                                            )
+                                          }
+                                        />
+                                        <label>
+                                          {file.fileName}
+                                          <a
+                                            href={`${backendUrl}/middlewares/${file.filePath}`}
+                                            target="_blank"
+                                            rel="noopener noreferrer"
+                                            className="text-blue-500 text-sm hover:underline mx-3"
+                                          >
+                                            View
+                                          </a>
+                                        </label>
+                                      </li>
+                                    ))}
+                                  </ul>
+                                ) : (
+                                  <p className="p-2 text-gray-500">
+                                    No Reports available for this appointment.
+                                  </p>
+                                )}
+                              </div>
+                            )}
+                          </div>
+                        </div>
 
-{/* Status and Fee */}
-<div className="mt-4 flex gap-4">
-  <div className="w-1/2">
-    <label className="block font-medium">Status</label>
-    <select
-      id={`status-${appointment._id}`}
-      className="p-2 border rounded-md w-full"
-    >
-      <option value="Pending">Pending</option>
-      <option value="Accepted">Accepted</option>
-      <option value="Completed">Completed</option>
-      <option value="Canceled">Canceled</option>
-    </select>
-  </div>
+                        {/* Doctor Selection and Fee */}
+                        <div className="mt-4">
+                          <label className="block font-medium">Doctor</label>
+                          <select
+                            value={selectedDoctor?.name || ""}
+                            onChange={(e) => {
+                              const doctor = doctors.find(
+                                (doc) => doc.name === e.target.value
+                              );
+                              setSelectedDoctor(doctor);
+                            }}
+                            className="p-2 border rounded-md w-full sm:w-auto"
+                          >
+                            <option value="" disabled>
+                              Select a doctor
+                            </option>
+                            {doctors.map((doctor) => (
+                              <option key={doctor._id} value={doctor.name}>
+                                {doctor.name} ({doctor.speciality})
+                              </option>
+                            ))}
+                          </select>
+                        </div>
 
-  <div className="w-1/2">
-    <label className="block font-medium">Doctor Fee</label>
-    <input
-      id={`fee-${appointment._id}`}
-      type="number"
-      className="p-2 border rounded-md w-full"
-      defaultValue={selectedDoctor?.fees || ""}
-    />
-  </div>
-</div>
+                        {/* Status and Fee */}
+                        <div className="mt-4 flex gap-4">
+                          <div className="w-1/2">
+                            <label className="block font-medium">Status</label>
+                            <select
+                              id={`status-${appointment._id}`}
+                              className="p-2 border rounded-md w-full"
+                            >
+                              <option value="Pending">Pending</option>
+                              <option value="Accepted">Accepted</option>
+                              <option value="Completed">Completed</option>
+                              <option value="Canceled">Canceled</option>
+                            </select>
+                          </div>
 
-{/* Submit Button */}
-<div className="mt-4 flex gap-4">
-  <button
-    onClick={() => handleSubmit(appointment._id)}
-    className="px-4 py-2 text-white bg-green-600 rounded-md"
-  >
-    Submit
-  </button>
-</div>
+                          <div className="w-1/2">
+                            <label className="block font-medium">
+                              Doctor Fee
+                            </label>
+                            <input
+                              id={`fee-${appointment._id}`}
+                              type="number"
+                              className="p-2 border rounded-md w-full"
+                              defaultValue={selectedDoctor?.fees || ""}
+                            />
+                          </div>
+                        </div>
 
+                        {/* Submit Button */}
+                        <div className="mt-4 flex gap-4">
+                          <button
+                            onClick={() => handleSubmit(appointment._id)}
+                            className="px-4 py-2 text-white bg-green-600 rounded-md"
+                          >
+                            Submit
+                          </button>
+                        </div>
                       </div>
                     )}
                   </div>

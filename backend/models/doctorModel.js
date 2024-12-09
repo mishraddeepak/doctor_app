@@ -12,14 +12,15 @@ const appointmentSchema = new mongoose.Schema({
   },
   patientReports:  [
     {
+      fileId: {type:String},
       fileType: { 
         type: String, 
         enum: ["audio", "video", "pdf", "image"], // Allowed types
-        required: true // Ensures file type is provided
+       
       },
       filePath: { 
         type: String, // Path or URL to the file
-        required: true // Ensures file path is provided
+        
       },
       description: { 
         type: String, // Optional description of the report

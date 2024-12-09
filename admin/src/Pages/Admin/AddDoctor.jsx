@@ -1,4 +1,3 @@
-
 import React, { useState } from "react";
 import { assets } from "../../assets/assets";
 import { useContext } from "react";
@@ -6,6 +5,7 @@ import { AppContext } from "../../context/AppContext";
 import axios from "axios";
 import { AdminContext } from "../../context/AdminContext";
 import { toast } from "react-toastify";
+import { FaRupeeSign } from "react-icons/fa";
 export default function AddDoctor() {
   const [docImg, setDocImg] = useState(null);
   const [name, setName] = useState("");
@@ -20,8 +20,7 @@ export default function AddDoctor() {
   const [address2, setAddress2] = useState("");
   const [isHeadDoctor, setIsHeadDoctor] = useState(false);
 
-
-  const { backendUrl,aToken } = useContext(AdminContext);
+  const { backendUrl, aToken } = useContext(AdminContext);
   console.log("backendurl", backendUrl);
   const handleFileChange = (event) => {
     const file = event.target.files[0];
@@ -45,7 +44,6 @@ export default function AddDoctor() {
       formData.append("address2", address2);
       formData.append("isHeadDoctor", isHeadDoctor);
       formData.forEach((value, key) => {
-
         console.log("form elements are...", `${key}:${value}`);
       });
 
@@ -59,23 +57,23 @@ export default function AddDoctor() {
           },
         }
       );
-      console.log("data is",data)
+      console.log("data is", data);
       if (data.success) {
         toast.success(data.message);
         setDocImg(null);
-      setName("");
-      setEmail("");
-      setPassword("");
-      setExperience("1 Year");
-      setFees("");
-      setAbout("");
-      setSpeciality("General Physician");
-      setDegree("");
-      setAddress1("");
-      setAddress2("");
-      setIsHeadDoctor(false);
-      }else{
-        toast.error(data.error)
+        setName("");
+        setEmail("");
+        setPassword("");
+        setExperience("1 Year");
+        setFees("");
+        setAbout("");
+        setSpeciality("General Physician");
+        setDegree("");
+        setAddress1("");
+        setAddress2("");
+        setIsHeadDoctor(false);
+      } else {
+        toast.error(data.error);
       }
     } catch (error) {
       toast.error(data.message);
@@ -148,23 +146,27 @@ export default function AddDoctor() {
                 value={experience}
                 onChange={(e) => setExperience(e.target.value)}
               >
-                {[...Array(10).keys()].map((i) => (
+                {[...Array(15).keys()].map((i) => (
                   <option key={i} value={`${i + 1} Year`}>
                     {i + 1} Year
                   </option>
                 ))}
+                <option value=""> {">15 Year's"} </option>
               </select>
             </div>
             <div className="flex-1 flex flex-col gap-1">
-              <p>Fees</p>
-              <input
-                className="border rounded px-3 py-2"
-                type="number"
-                placeholder="Fees"
-                value={fees}
-                onChange={(e) => setFees(e.target.value)}
-                required
-              />
+              <p>Fees:</p>
+              <div className="relative">
+                <FaRupeeSign className="absolute top-1/2 -left-0 transform -translate-y-1/2 text-gray-500 text-sm" />
+                <input
+                  className="border rounded px-3 py-2"
+                  type="number"
+                  placeholder="Fees"
+                  value={fees}
+                  onChange={(e) => setFees(e.target.value)}
+                  required
+                />
+              </div>
             </div>
           </div>
           <div className="w-full lg:flex-1 flex flex-col gap-4">
@@ -177,7 +179,39 @@ export default function AddDoctor() {
               >
                 <option value="General Physician">General Physician</option>
                 <option value="Gynecologist">Gynecologist</option>
-                <option value="Pediatricians">Pediatricians</option>
+                <option value="Pediatrician">Pediatrician</option>
+                <option value="Cardiologist">Cardiologist</option>
+                <option value="Dermatologist">Dermatologist</option>
+                <option value="Endocrinologist">Endocrinologist</option>
+                <option value="Gastroenterologist">Gastroenterologist</option>
+                <option value="Neurologist">Neurologist</option>
+                <option value="Oncologist">Oncologist</option>
+                <option value="Orthopedic Surgeon">Orthopedic Surgeon</option>
+                <option value="Ophthalmologist">Ophthalmologist</option>
+                <option value="Psychiatrist">Psychiatrist</option>
+                <option value="Pulmonologist">Pulmonologist</option>
+                <option value="Radiologist">Radiologist</option>
+                <option value="Urologist">Urologist</option>
+                <option value="Anesthesiologist">Anesthesiologist</option>
+                <option value="Rheumatologist">Rheumatologist</option>
+                <option value="Nephrologist">Nephrologist</option>
+                <option value="Pathologist">Pathologist</option>
+                <option value="Hematologist">Hematologist</option>
+                <option value="ENT Specialist">ENT Specialist</option>
+                <option value="Plastic Surgeon">Plastic Surgeon</option>
+                <option value="General Surgeon">General Surgeon</option>
+                <option value="Dentist">Dentist</option>
+                <option value="Chiropractor">Chiropractor</option>
+                <option value="Physiotherapist">Physiotherapist</option>
+                <option value="Dietitian/Nutritionist">
+                  Dietitian/Nutritionist
+                </option>
+                <option value="Speech Therapist">Speech Therapist</option>
+                <option value="Occupational Therapist">
+                  Occupational Therapist
+                </option>
+                <option value="Psychologist">Psychologist</option>
+                <option value="Obstetrician">Obstetrician</option>
               </select>
             </div>
             <div className="flex-1 flex flex-col gap-1">
@@ -221,8 +255,8 @@ export default function AddDoctor() {
             onChange={(e) => setAbout(e.target.value)}
           />
         </div>
-         {/* Head Doctor Checkbox */}
-         <div className="mt-4 flex items-center gap-2">
+        {/* Head Doctor Checkbox */}
+        <div className="mt-4 flex items-center gap-2">
           <input
             type="checkbox"
             id="is-head-doctor"

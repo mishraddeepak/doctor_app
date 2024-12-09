@@ -18,6 +18,7 @@ export default function Login() {
 
     try {
       if (state === "Admin") {
+        
         console.log("hii");
         const { data } = await axios.post(`${backendUrl}/api/admin/login`, {
           email,
@@ -31,6 +32,7 @@ export default function Login() {
           toast.error(data.message);
         }
       } else {
+       
         const { data } = await axios.post(`${backendUrl}/api/doctor/login`, {
           email,
           password,

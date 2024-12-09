@@ -12,13 +12,13 @@ userRouter.post('/register', registerUser)
 // logging in user
 userRouter.post('/login', loginUser)
 // Booking the appoint ment for the user based upon the userID or _.id
-userRouter.post('/book-appointment/:userID',verifyToken,  upload.none(), bookAppointment)
+userRouter.post('/book-appointment/:userID',  upload.none(), bookAppointment)
 // after the login updating the profile with submission of the reports
 userRouter.post('/update-profile', uploadFiles, createUserProfile)
 
 
 // deleting the report submitted
-userRouter.delete('/information/delete/:userID', verifyToken, deleteUserFile)
+userRouter.delete('/information/delete/:userID', deleteUserFile)
 
 
 userRouter.get('/profile/:userID', getUserByID)

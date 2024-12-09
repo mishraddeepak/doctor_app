@@ -1,7 +1,7 @@
 import React, { useContext, useEffect, useState } from "react";
 import axios from "axios";
 import { DoctorContext } from "../../context/DoctorContext";
-
+import {toast} from 'react-toastify'
 export default function AllAppointmentsUI() {
   const [expandedIndex, setExpandedIndex] = useState(null);
   const [allAppointments, setAllAppointments] = useState([]);
@@ -92,22 +92,30 @@ export default function AllAppointmentsUI() {
     });
   };
 
-  const handleSubmit = () => {
+  const handleSubmit = async(patientId,appointmentId) => {
     const prescriptionData = {
       prescriptions,
       instruction,
+      appointmentId
     };
-    console.log("Submitted Prescription Data:", prescriptionData);
+  
+    
     // Add API call to submit prescription data
+    try{
+const {data} = await axios.post(`${backendUrl}/api/doctor/update-prescription/${patientId}`,prescriptionData)
+console.log(data)
+if(data.success){
+  
+toast.success(data.message)
+}
+    }catch(error){
+
+    }
   };
 
   let serialNumber = 1;
 
-  console.log("aLL appointments",allAppointments);
-  const reports = [
-    { name: "Report 1", link: "https://example.com/report1" },
-    { name: "Report 2", link: "https://example.com/report2" },
-  ];
+ 
   return (
     <div className="w-full max-w-6xl m-5">
       <p className="mb-3 text-lg font-medium">All Appointments</p>
@@ -211,17 +219,17 @@ export default function AllAppointmentsUI() {
                               <h3 className="text-lg font-bold mb-2">
                                 Reports
                               </h3>
-                              {reports && reports.length > 0 ? (
+                              {appointment.patientReports && appointment.patientReports.length > 0 ? (
                                 <ul className="list-disc pl-6">
-                                  {reports.map((report, index) => (
+                                  {appointment.patientReports.map((report, index) => (
                                     <li key={index} className="mb-1">
                                       <a
-                                        href={report.link} // Assume each report has a `link` property
+                                        href={`${backendUrl}/middlewares/${report.filePath}`} // Assume each report has a `link` property
                                         target="_blank"
                                         rel="noopener noreferrer"
                                         className="text-blue-500 hover:underline"
                                       >
-                                        {report.name}
+                                        {report.fileName}
                                       </a>
                                     </li>
                                   ))}
@@ -323,7 +331,7 @@ export default function AllAppointmentsUI() {
 
                         {/* Submit Button */}
                         <button
-                          onClick={handleSubmit}
+                          onClick={()=>handleSubmit(patient._id,appointment._id)}
                           className="mt-4 px-6 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-all"
                         >
                           Submit Prescription

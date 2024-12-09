@@ -7,9 +7,44 @@ const appointmentSchema = new mongoose.Schema({
         default: new mongoose.Types.ObjectId('507f1f77bcf86cd799439011')  // Use a valid ObjectId here
     },
     slotTime: { type: String, required: true },
+    docName:{type: String,},
+    docFee:{type: String},
+    patientReports:  
+       [ {
+          fileId: {type:String},
+          fileType: { 
+            type: String, 
+            enum: ["audio", "video", "pdf", "image"], // Allowed types
+           
+          },
+          fileName:{type:String},
+          filePath: { 
+            type: String, // Path or URL to the file
+            
+          },
+          description: { 
+            type: String, // Optional description of the report
+            default: "No description provided" 
+          },
+          uploadedAt: { 
+            type: Date, 
+            default: Date.now // Automatically set the upload timestamp
+          }
+        }]
+      ,
     symptoms: { type: String, required: true },
     selectedDate:{type:String},
-    priscription:{type:String},
+    prescriptions: [{
+      medicine: {
+        type: String,
+     
+      },
+      dose: {
+        type: String,
+      
+      },
+    }
+    ],
     instruction:{type:String},
     bookedAt: { type: Date, default: Date.now },
     status: {type: String, enum: ["Pending", "Accepted", "Canceled","Completed"], default: "Pending"} 
