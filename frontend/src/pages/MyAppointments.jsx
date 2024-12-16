@@ -137,7 +137,19 @@ function MyAppointments() {
                     </span>
                   </div>
                 </div>
-                
+                {/* Symptoms */}
+                <div className="bg-gray-50 p-4 rounded-md">
+                 
+
+                  <div className="bg-gray-50 p-1 rounded-md">
+                    <h2 className="font-semibold text-gray-700 inline-block mr-2">
+                      Symptoms:
+                    </h2>
+                    <span className="text-sm text-gray-600">
+                      {item.symptoms}
+                    </span>
+                  </div>
+                </div>
                 {/* Doctor Assigned */}
 
                 <div className="bg-gray-50 p-4">
