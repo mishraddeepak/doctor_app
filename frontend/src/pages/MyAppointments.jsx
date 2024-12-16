@@ -173,6 +173,8 @@ function MyAppointments() {
                   <p className="text-sm text-gray-600">{item.instruction?item.instruction:"No instruction available"}</p>
                 </div>
                 {/* Follow-Up Date Section */}
+                {/* Follow-Up Date Section */}
+
                 {item.followUpDate && (
                   <div className="bg-gray-50 p-4 rounded-md">
                     <p className="font-semibold text-gray-700">
