@@ -8,7 +8,6 @@ function MyAppointments() {
 
   useEffect(() => {
     const fetchData = async () => {
-     
       try {
         const response = await axios.get(
           `${backendUrl}/api/user/information/${userID}`,
@@ -18,7 +17,7 @@ function MyAppointments() {
             },
           }
         );
-console.log(response.data.data)
+        console.log(response.data.data);
         // Sort appointments by selectedDate and slotTime
         const sortedAppointments = response.data.data.appointments.sort(
           (a, b) => {
@@ -29,7 +28,6 @@ console.log(response.data.data)
         );
 
         setAppointments(sortedAppointments);
-       
       } catch (error) {
         console.error(error);
       }
@@ -42,7 +40,7 @@ console.log(response.data.data)
   const toggleExpand = (index) => {
     setExpandedIndex((prevIndex) => (prevIndex === index ? null : index));
   };
-
+  console.log(appointments);
   return (
     <div>
       <p className="pb-3 mt-12 font-medium text-zinc-700 border-b">
@@ -77,13 +75,13 @@ console.log(response.data.data)
 
               {/* Basic Details */}
               <div className="flex-1 text-sm text-zinc-600">
-                <p className="text-neutral-800 font-semibold">
-                  {item.doctorName || "Doctor Name"}
+                <p className="text-neutral-800 font-semibold"> Doctor: {" "}
+                  {item.docName || "Doctor Name"}
                 </p>
-                <p>{item.speciality || "Speciality"}</p>
-                <p className="text-zinc-700 font-medium mt-1">Address:</p>
-                <p className="text-xs">{item.address?.line1 || "Line 1"}</p>
-                <p className="text-xs">{item.address?.line2 || "Line 2"}</p>
+                {/* <p>{item.speciality || "Speciality"}</p> */}
+                {/* <p className="text-zinc-700 font-medium mt-1">Address:</p> */}
+                {/* <p className="text-xs">{item.address?.line1 || "Line 1"}</p> */}
+                {/* <p className="text-xs">{item.address?.line2 || "Line 2"}</p> */}
                 <p className="text-xs mt-1 font-semibold">
                   <span className="text-sm text-neutral-700 font-medium">
                     Date & Time:
@@ -107,14 +105,13 @@ console.log(response.data.data)
                 <div className="mt-2">
                   <span
                     className={`px-2 py-1 rounded text-xs font-medium ${
-                          item.status === "Pending"
+                      item.status === "Pending"
                         ? "bg-yellow-100 text-yellow-700"
                         : item.status === "Accepted"
                         ? "bg-green-100 text-green-700"
                         : item.status === "Completed"
                         ? "bg-green-100 text-green-700"
                         : item.status === "Canceled"
-            
                         ? "bg-red-100 text-red-700"
                         : "bg-gray-100 text-gray-700"
                     }`}
@@ -129,51 +126,51 @@ console.log(response.data.data)
             {expandedIndex === index && (
               <div className="mt-4 space-y-4">
                 <div className="bg-gray-50 p-4 rounded-md">
-                  {/* Prescription Section */}
-                  <p className="font-semibold text-gray-700">Prescription:</p>
-                  <div className="space-y-2">
-                    {item.medications && item.medications.length > 0 ? (
-                      item.medications.map((med, idx) => (
-                        <div key={idx} className="space-y-1">
-                          <p className="font-medium text-gray-800">
-                            {med.name}
-                          </p>
-                          <p className="text-sm text-gray-600">
-                            <strong>Dosage:</strong> {med.dosage}
-                          </p>
-                          <p className="text-sm text-gray-600">
-                            <strong>Frequency:</strong> {med.frequency}
-                          </p>
-                          <p className="text-sm text-gray-600">
-                            <strong>Duration:</strong> {med.duration}
-                          </p>
-                        </div>
-                      ))
-                    ) : (
-                      <p className="text-sm text-gray-500">
-                        No medications listed.
-                      </p>
-                    )}
+                  {/* Assigned DAOCTROR  */}
+
+                  <div className="bg-gray-50 p-1 rounded-md">
+                    <h2 className="font-semibold text-gray-700 inline-block mr-2">
+                      Doctor:
+                    </h2>
+                    <span className="text-sm text-gray-600">
+                      {item.docName}
+                    </span>
                   </div>
                 </div>
-                {/* Symptoms Section */}
-                {item.symptoms && (
-                  <div className="bg-gray-50 p-4 rounded-md">
-                    <p className="font-semibold text-gray-700">Symptoms:</p>
-                    <p className="text-sm text-gray-600">{item.symptoms}</p>
-                  </div>
-                )}
+                
                 {/* Doctor Assigned */}
-                {item.symptoms && (
-                  <div className="bg-gray-50 p-4 rounded-md">
-                    <p className="font-semibold text-gray-700">Symptoms:</p>
-                    <p className="text-sm text-gray-600">{item.symptoms}</p>
-                  </div>
-                )}
+
+                <div className="bg-gray-50 p-4">
+                  <p className="font-semibold text-gray-700">Prescriptions:</p>
+                  <table className="table-auto border-collapse border border-gray-300 w-1/2  text-sm">
+                    <thead>
+                      <tr>
+                        <th className="border border-gray-300 px-4 py-2 max-w-[200px]">
+                          Medicine
+                        </th>
+                        <th className="border border-gray-300 px-4 py-2 max-w-[200px]">
+                          Dose
+                        </th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {item.prescriptions.map((prescription) => (
+                        <tr key={prescription._id}>
+                          <td className="border border-gray-300 px-4 py-2 max-w-[200px]">
+                            <span>{prescription.medicine}</span>
+                          </td>
+                          <td className="border border-gray-300 px-4 py-2  max-w-[200px]">
+                            <span>{prescription.dose}</span>
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
                 {/* Instructions Section */}
                 <div className="bg-gray-50 p-4 rounded-md">
                   <p className="font-semibold text-gray-700">Instructions:</p>
-                  <p className="text-sm text-gray-600">{item.instructions}</p>
+                  <p className="text-sm text-gray-600">{item.instruction?item.instruction:"No instruction available"}</p>
                 </div>
                 {/* Follow-Up Date Section */}
                 {item.followUpDate && (
