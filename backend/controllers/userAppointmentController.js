@@ -3,99 +3,12 @@ const fs = require('fs')
 const path = require('path');
 const mongoose = require('mongoose');
 
-// const createUserProfile = async (req, res) => {
-//     try {
-//         const { userID, email, name, phone, image, address, gender, dob } = req.body;
-//         console.log(userID)
-//         // Process uploaded files from multer
-//         const uploadedFiles = req.files.map((file) => ({
-//             fileName: file.originalname,
-//             filePath: `${file.filename}`
-
-//         }));
-
-//         console.log("Uploaded Files:", uploadedFiles);
-
-//         // Check if the user with the same email exists (even if the userID is different)
-//         const existingUser = await UserProfile.findOne({ email });
-
-//         if (existingUser && existingUser._id.toString() !== userID) {
-//             return res.status(400).json({
-//                 message: "A user with this email already exists.",
-//             });
-//         }
-
-//         // Check if the user profile already exists
-//         const userProfile = await UserProfile.findById(userID);
-
-//         if (userProfile) {
-//             // Update the existing user profile
-//             const updatedUserProfile = await UserProfile.findByIdAndUpdate(
-//                 userID,
-//                 {
-//                     name,
-//                     email,
-//                     phone,
-//                     image,
-//                     address,
-//                     gender,
-//                     dob,
-//                     $push: { uploadedFiles: { $each: uploadedFiles } }, // Append new files
-//                 },
-//                 { new: true, runValidators: true }
-//             );
-
-//             return res.status(200).json({
-//                 message: "User profile updated successfully",
-//                 data: updatedUserProfile,
-//             });
-//         }
-
-//         // Create a new user profile
-//         const newUserProfile = new UserProfile({
-//             _id: userID,
-//             name,
-//             email,
-//             phone,
-//             image,
-//             address,
-//             gender,
-//             dob,
-//             uploadedFiles,
-//         });
-
-//         // Save the new user profile
-//         const savedUserProfile = await newUserProfile.save();
-
-//         res.status(201).json({
-//             message: "User profile created successfully",
-//             data: savedUserProfile,
-//         });
-//     } catch (error) {
-//         console.error("Error creating or updating user profile:", error);
-//         res.status(500).json({ message: "Error creating or updating user profile", error });
-//     }
-// };
-
-
-
-
-
-
-
-
-// Update user profile with optional file uploads
-
 
 
 const createUserProfile = async (req, res) => {
     try {
         const { userID, email, name, phone, image, address, gender, dob } = req.body;
         console.log(userID);
-        // if (req.files.length === 0) {
-        //     return res.json({success:false, message: 'No files uploaded or files are not PDF' });
-        //   }
-        // Process uploaded files from multer
         const uploadedFiles = req.files.map((file) => ({
             fileName: file.originalname,
             filePath: path.join('uploads', file.filename), // Include the relative directory
@@ -232,41 +145,6 @@ const updateUserProfile = async (req, res) => {
 
 
 
-// user profile by ID
-// const getUserProfile = async (req, res) => {
-//     try {
-//         const { userID } = req.params; // Assuming userID is passed as a route parameter
-// console.log(userID)
-//         // Fetch the user profile from the database
-//         const userProfile = await UserProfile.findById(userID);
-
-//         if (!userProfile) {
-//             return res.status(404).json({ message: "User profile not found" });
-//         }
-//         const fileData = userProfile.uploadedFiles[0];
-
-//         const filePath = fileData.filePath;
-
-
-//         // console.log("File Path in Profile:", filePath);
-//         const fileContent = fs.readFileSync(filePath, 'utf8'); // Sync for simplicity
-//         console.log("hellooo",fileContent)
-//         res.status(200).json({
-//             message: "User profile retrieved successfully",
-//             data: {
-//                 ...userProfile.toObject(),
-//                 uploadedFiles: userProfile.uploadedFiles.map(file => ({
-//                     ...file,
-//                     fileExists: fs.existsSync(file.filePath)
-//                 })),
-//                 fileContent: fileContent // Optional: Add this if file content is needed
-//             }
-//         });
-//     } catch (error) {
-//         console.error("Error retrieving user profile:", error);
-//         res.status(500).json({ message: "Error retrieving user profile", error });
-//     }
-// };
 
 const getUserProfile = async (req, res) => {
     try {

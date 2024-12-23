@@ -38,47 +38,59 @@ export default function Appointment() {
   };
 
   const getAvailableSlots = () => {
-    let today = new Date();
-    today.setMonth(today.getMonth() + selectedMonth);
+    const now = new Date();
+    const todayStart = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+    let currentMonth = new Date(now.getFullYear(), now.getMonth(), 1);
+    currentMonth.setMonth(currentMonth.getMonth() + selectedMonth);
   
     let slots = [];
-    const daysInMonth = new Date(today.getFullYear(), today.getMonth() + 1, 0).getDate();
+    const daysInMonth = new Date(currentMonth.getFullYear(), currentMonth.getMonth() + 1, 0).getDate();
   
     for (let day = 1; day <= daysInMonth; day++) {
-      let currentDate = new Date(today.getFullYear(), today.getMonth(), day);
+      let currentDate = new Date(currentMonth.getFullYear(), currentMonth.getMonth(), day);
   
-      // Skip past dates for the current month
-      if (selectedMonth === 0 && currentDate < new Date()) {
+      // Skip all past dates if in the current month
+      if (selectedMonth === 0 && currentDate < todayStart) {
         continue;
+      }
+     
+      // Determine start time for today and other days
+      let startTime = new Date(currentDate);
+      if (selectedMonth === 0 && currentDate.toDateString() === now.toDateString()) {
+        // For today, start from the next available half-hour
+        startTime.setHours(now.getHours(), now.getMinutes() > 30 ? 30 : 0, 0, 0);
+        startTime.setMinutes(startTime.getMinutes() + 30);
+      } else {
+        // Default start time for other days
+        startTime.setHours(10, 0, 0, 0);
       }
   
       let endTime = new Date(currentDate);
-      endTime.setHours(21, 0, 0, 0);
-  
-      if (day === today.getDate() && selectedMonth === 0) {
-        currentDate.setHours(Math.max(10, currentDate.getHours() + 1));
-        currentDate.setMinutes(currentDate.getMinutes() > 30 ? 30 : 0);
-      } else {
-        currentDate.setHours(10, 0, 0, 0);
-      }
+      endTime.setHours(21, 0, 0, 0); // End time is 9:00 PM
   
       let timeSlots = [];
-      while (currentDate < endTime) {
-        let formattedTime = currentDate.toLocaleTimeString([], {
+      while (startTime < endTime) {
+        let formattedTime = startTime.toLocaleTimeString([], {
           hour: "2-digit",
           minute: "2-digit",
         });
         timeSlots.push({
-          datetime: new Date(currentDate),
+          datetime: new Date(startTime),
           time: formattedTime,
         });
-        currentDate.setMinutes(currentDate.getMinutes() + 30);
+        startTime.setMinutes(startTime.getMinutes() + 30);
       }
-      slots.push(timeSlots);
+  
+      // Only add non-empty slots to the list
+      if (timeSlots.length > 0) {
+        slots.push(timeSlots);
+      }
     }
   
     setDocSlots(slots);
   };
+  
+  
   
 
   const handleFileChange = (e) => {
