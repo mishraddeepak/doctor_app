@@ -216,7 +216,7 @@ console.log(adminUrl)
               onClick={() => navigate("/login")}
               className="bg-primary text-white px-8 py-3 rounded-full font-light hidden md:block "
             >
-              Create account
+              Log in / Register
             </button>
 
             {/* Admin/Doctor Button */}
@@ -263,13 +263,13 @@ console.log(adminUrl)
               <p className="px-4 py-2 rounded inline-block">Contact</p>
             </NavLink>
             <NavLink
-              className="bg-primary text-white px-8 py-3 rounded-full font-light"
+              className="bg-primary text-white text-base px-4 py-2 rounded-full font-light"
               onClick={() => {
                 token ? logout() : setShoMenu(false);
               }}
               to="/login"
             >
-              <p>{token ? "Log out" : "Create account"}</p>
+              <p>{token ? "Log out" : "Log in / Register"}</p>
             </NavLink>
             {/* Admin/Doctor Button in Mobile View */}
             <NavLink

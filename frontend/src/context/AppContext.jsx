@@ -45,6 +45,7 @@ const {data}=await axios.get(`${backendUrl}/`)
 }
 
 
+
 const value = {
     doctors,
     currencySymbol,

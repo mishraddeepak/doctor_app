@@ -29,6 +29,7 @@ const loginDoctor = async (req, res) => {
 
 const getDoctorAppointments = async (req, res) => {
   const { doctorId } = req.params;
+console.log(doctorId)
 
   try {
     const doctorAppointments = await UserProfile.find(
@@ -46,7 +47,7 @@ const getDoctorAppointments = async (req, res) => {
       model: "Doctor",
       select: "name speciality",
     });
-
+console.log("hiii...",doctorAppointments)
     if (!doctorAppointments || doctorAppointments.length === 0) {
       return res.status(404).json({ message: "No appointments found for this doctor." });
     }
@@ -99,7 +100,7 @@ const getDoctorAppointments = async (req, res) => {
 // add prescription to the patient
 const prescriptionUpdate = async (req, res) => {
   const { patientId } = req.params; // Extract patient ID from URL parameters
-  const { appointmentId, prescriptions, instruction } = req.body; // Extract data from the request body
+  const { status,appointmentId, prescriptions, instruction } = req.body; // Extract data from the request body
 
   try {
     // Find the patient by their ID
@@ -138,6 +139,7 @@ const prescriptionUpdate = async (req, res) => {
           if (!isDuplicate) {
             appointment.prescriptions.push(newPrescription);
           }
+        
         }
       });
     }
@@ -146,6 +148,7 @@ const prescriptionUpdate = async (req, res) => {
     if (instruction) {
       appointment.instruction = instruction;
     }
+    appointment.status=status
 
     // Save the updated patient document
     await patient.save();

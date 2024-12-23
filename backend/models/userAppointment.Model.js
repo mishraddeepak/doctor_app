@@ -43,6 +43,9 @@ const appointmentSchema = new mongoose.Schema({
         type: String,
       
       },
+      timing:{
+        type: String,
+      }
     }
     ],
     instruction:{type:String},

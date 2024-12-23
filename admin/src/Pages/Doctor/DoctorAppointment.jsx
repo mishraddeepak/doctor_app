@@ -16,7 +16,7 @@ export default function AllAppointmentsUI() {
   const [instruction, setInstruction] = useState("");
   const [updatedPresc, setUpdatedPresc] = useState([]);
   const [prescSubmitted, setPrescSubmitted] = useState(false);
-  
+
   useEffect(() => {
     getDoctorDetails();
   }, []);
@@ -35,13 +35,14 @@ export default function AllAppointmentsUI() {
     if (id) {
       const getAllData = async () => {
         try {
+          console.log(id);
           const { data } = await axios.get(
             `${backendUrl}/api/doctor/getallappointments/${id}`
           );
           console.log("hiii", data);
           if (data.success) {
-            const allAppointmentsList = data.doctorAppointments
-              .flatMap((patient) => {
+            const allAppointmentsList = data.doctorAppointments.flatMap(
+              (patient) => {
                 return patient.appointments.map((appointment) => ({
                   ...appointment,
                   patientId: patient._id,
@@ -49,10 +50,12 @@ export default function AllAppointmentsUI() {
                   patientEmail: patient.email, // Added email
                   patientDob: patient.dob,
                 }));
-              })
-               // Sort all appointments globally by date and time
+              }
+            );
+            // Sort all appointments globally by date and time
             const sortedAppointments = allAppointmentsList.sort((a, b) => {
-              const dateComparison = new Date(a.selectedDate) - new Date(b.selectedDate);
+              const dateComparison =
+                new Date(a.selectedDate) - new Date(b.selectedDate);
               if (dateComparison !== 0) return dateComparison; // Sort by date first
               return a.slotTime.localeCompare(b.slotTime); // Then sort by time
             });
@@ -78,7 +81,7 @@ export default function AllAppointmentsUI() {
       };
       getAllData();
     }
-  }, [id, backendUrl,prescSubmitted, prescriptions, instruction]);
+  }, [id, backendUrl, prescSubmitted, prescriptions, instruction]);
 
   const toggleExpand = (rowIndex) => {
     setExpandedIndex((prevIndex) => (prevIndex === rowIndex ? null : rowIndex));
@@ -110,6 +113,7 @@ export default function AllAppointmentsUI() {
       prescriptions,
       instruction,
       appointmentId,
+      status:"Completed"
     };
 
     try {
@@ -119,9 +123,10 @@ export default function AllAppointmentsUI() {
       );
       setUpdatedPresc(data);
       setPrescSubmitted(!prescSubmitted);
+
       if (data.success) {
-        console.log(data.updatedAppointment);
         toast.success(data.message);
+       
       }
     } catch (error) {
       console.error("Error submitting prescription:", error);
@@ -307,6 +312,9 @@ export default function AllAppointmentsUI() {
                                       Medicine
                                     </th>
                                     <th className="border-b px-4 py-2">Dose</th>
+                                    <th className="border-b px-4 py-2">
+                                      Timing
+                                    </th>
                                   </tr>
                                 </thead>
                                 <tbody>
@@ -321,6 +329,9 @@ export default function AllAppointmentsUI() {
                                         </td>
                                         <td className="border-b px-4 py-2">
                                           {prescription.dose}
+                                        </td>
+                                        <td className="border-b px-4 py-2">
+                                          {prescription.timing}
                                         </td>
                                       </tr>
                                     )
@@ -339,7 +350,7 @@ export default function AllAppointmentsUI() {
                           )}
 
                           {/* Prescription Table */}
-                          {!prescSubmitted && (
+                          {(appointment.status === "Accepted" || appointment.status === "Pending") && (
                             <div className="mt-4">
                               <p className="font-medium text-sm">
                                 Prescription:
@@ -351,6 +362,10 @@ export default function AllAppointmentsUI() {
                                       Medicine
                                     </th>
                                     <th className="border-b px-4 py-2">Dose</th>
+                                    <th className="border-b px-4 py-2">
+                                      Timing
+                                    </th>
+
                                     <th className="border-b px-4 py-2">
                                       Actions
                                     </th>
@@ -391,6 +406,20 @@ export default function AllAppointmentsUI() {
                                         />
                                       </td>
                                       <td className="border-b px-4 py-2">
+                                        <input
+                                          type="text"
+                                          value={prescription.timing}
+                                          onChange={(e) =>
+                                            handlePrescriptionChange(
+                                              index,
+                                              "timing",
+                                              e.target.value
+                                            )
+                                          }
+                                          className="w-full border px-2 py-1"
+                                        />
+                                      </td>
+                                      <td className="border-b px-4 py-2">
                                         <button
                                           onClick={() =>
                                             removePrescriptionRow(index)
@@ -414,7 +443,7 @@ export default function AllAppointmentsUI() {
                           )}
 
                           {/* Instruction Text Area */}
-                          {!prescSubmitted && (
+                          {(appointment.status === "Accepted" || appointment.status === "Pending") && (
                             <div className="mt-4">
                               <p className="font-medium text-sm mb-2">
                                 Instructions:
@@ -429,7 +458,7 @@ export default function AllAppointmentsUI() {
                             </div>
                           )}
 
-                          {!prescSubmitted && (
+                          {(appointment.status === "Accepted" || appointment.status === "Pending") && (
                             <div className="mt-4">
                               <button
                                 onClick={() =>

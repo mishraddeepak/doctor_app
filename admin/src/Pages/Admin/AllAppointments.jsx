@@ -77,87 +77,167 @@ export default function AllAppointments() {
     });
   };
 
+  // const handleSubmit = async (appointmentId) => {
+  //   const fee = document.getElementById(`fee-${appointmentId}`).value;
+  //   const status = document.getElementById(`status-${appointmentId}`).value;
+
+  //   if ((!selectedDoctor || !selectedDoctor.name || !selectedDoctor._id) && status !== 'Canceled') {
+  //     alert("Please select a doctor.");
+  //     return;
+  //   }
+
+    
+  //   // Get the appointment details
+  //   const appointment = completeData
+  //     .flatMap((patient) => patient.appointments)
+  //     .find((app) => app._id === appointmentId);
+
+  //   // Ensure the appointment exists
+  //   if (!appointment) {
+  //     alert("Appointment not found.");
+  //     return;
+  //   }
+
+  //   // Find the corresponding patient for the appointment
+  //   const patient = completeData.find((patient) =>
+  //     patient.appointments.some((app) => app._id === appointmentId)
+  //   );
+
+  //   // Ensure the patient exists
+  //   if (!patient) {
+  //     alert("Patient not found.");
+  //     return;
+  //   }
+
+  //   // Extract patient details
+  //   const patientDetails = {
+  //     _id: patient.userId, // Patient's userId (unique identifier)
+  //     name: patient.name || "Unknown",
+  //     email: patient.email || "Unknown",
+  //     phone: patient.phone || "Unknown",
+  //     address: patient.address || { line1: "Unknown", line2: "Unknown" },
+  //     gender: patient.gender || "Unknown",
+  //     dob: patient.dob || "Unknown",
+  //     // selectedFiles: selectedFiles[appointmentId] || [], // Optional file selection
+  //   };
+  //   console.log("selected doctor", selectedDoctor);
+  //   // Prepare appointment info
+  //   const appointmentDetails = {
+  //     appointmentId,
+  //     status,
+  //     docName: selectedDoctor?.name || '',
+  //     docId: selectedDoctor?._id ||'507f1f77bcf86cd799439011',
+  //     docFee: fee || selectedDoctor?.fees || 0,
+  //     details: appointment.details || "No additional details provided.",
+  //     selectedFiles: selectedFiles[appointmentId] || [], // Optional file selection
+  //   };
+  //   console.log("Appointment Details:", appointmentDetails);
+  //   try {
+  //     // First API request to update appointment details
+  //     const { data } = await axios.post(
+  //       `${backendUrl}/api/admin/appointment-status/${appointmentId}`,
+  //       appointmentDetails
+  //     );
+  //     console.log(data);
+  //     // Second API request to send patient and appointment info
+  //     await axios.post(
+  //       `${backendUrl}/api/admin/assign-doctor/${selectedDoctor._id}`,
+  //       {
+  //         patient: patientDetails,
+  //         appointmentDetails,
+  //       }
+  //     );
+  //     console.log("hii");
+  //     alert("Appointment and patient details updated successfully!");
+  //     getAllAppointments(); // Refresh the appointments list
+  //   } catch (error) {
+  //     console.error(
+  //       "Error updating appointment or sending patient info:",
+  //       error
+  //     );
+  //     alert("Failed to update appointment or send patient info.");
+  //   }
+  // };
+
   const handleSubmit = async (appointmentId) => {
-    if (!selectedDoctor) {
+    const fee = document.getElementById(`fee-${appointmentId}`).value;
+    const status = document.getElementById(`status-${appointmentId}`).value;
+  
+    // Ensure a doctor is selected only when the status is not 'Canceled'
+    if ((!selectedDoctor || !selectedDoctor.name || !selectedDoctor._id) && status !== 'Canceled') {
       alert("Please select a doctor.");
       return;
     }
-
-    const fee = document.getElementById(`fee-${appointmentId}`).value;
-    const status = document.getElementById(`status-${appointmentId}`).value;
-
+  
     // Get the appointment details
     const appointment = completeData
       .flatMap((patient) => patient.appointments)
       .find((app) => app._id === appointmentId);
-
-    // Ensure the appointment exists
+  
     if (!appointment) {
       alert("Appointment not found.");
       return;
     }
-
-    // Find the corresponding patient for the appointment
+  
     const patient = completeData.find((patient) =>
       patient.appointments.some((app) => app._id === appointmentId)
     );
-
-    // Ensure the patient exists
+  
     if (!patient) {
       alert("Patient not found.");
       return;
     }
-
-    // Extract patient details
+  
     const patientDetails = {
-      _id: patient.userId, // Patient's userId (unique identifier)
+      _id: patient.userId,
       name: patient.name || "Unknown",
       email: patient.email || "Unknown",
       phone: patient.phone || "Unknown",
       address: patient.address || { line1: "Unknown", line2: "Unknown" },
       gender: patient.gender || "Unknown",
       dob: patient.dob || "Unknown",
-      // selectedFiles: selectedFiles[appointmentId] || [], // Optional file selection
     };
-    console.log("selected doctor", selectedDoctor);
-    // Prepare appointment info
+  
+    // Use a dummy doctor ID for 'Canceled' status
     const appointmentDetails = {
       appointmentId,
       status,
-      docName: selectedDoctor.name,
-      docId: selectedDoctor._id,
-      docFee: fee || selectedDoctor.fees,
+      docName: status === 'Canceled' ? '' : selectedDoctor?.name || '',
+      docId: status === 'Canceled' ? '507f1f77bcf86cd799439011' : selectedDoctor?._id,
+      docFee: status === 'Canceled' ? 0 : fee || selectedDoctor?.fees || 0,
       details: appointment.details || "No additional details provided.",
-      selectedFiles: selectedFiles[appointmentId] || [], // Optional file selection
+      selectedFiles: selectedFiles[appointmentId] || [],
     };
+  
     console.log("Appointment Details:", appointmentDetails);
+  
     try {
-      // First API request to update appointment details
+      // Update appointment details
       const { data } = await axios.post(
         `${backendUrl}/api/admin/appointment-status/${appointmentId}`,
         appointmentDetails
       );
       console.log(data);
-      // Second API request to send patient and appointment info
-      await axios.post(
-        `${backendUrl}/api/admin/assign-doctor/${selectedDoctor._id}`,
-        {
-          patient: patientDetails,
-          appointmentDetails,
-        }
-      );
-      console.log("hii");
+  
+      // Only assign a doctor if the status is not 'Canceled'
+      if (status !== 'Canceled' && selectedDoctor && selectedDoctor._id) {
+        await axios.post(
+          `${backendUrl}/api/admin/assign-doctor/${selectedDoctor._id}`,
+          {
+            patient: patientDetails,
+            appointmentDetails,
+          }
+        );
+      }
+  
       alert("Appointment and patient details updated successfully!");
       getAllAppointments(); // Refresh the appointments list
     } catch (error) {
-      console.error(
-        "Error updating appointment or sending patient info:",
-        error
-      );
+      console.error("Error updating appointment or sending patient info:", error);
       alert("Failed to update appointment or send patient info.");
     }
   };
-
+  
   let serialNumber = 1;
 
   const sortAppointments = (appointments) => {
@@ -256,13 +336,13 @@ export default function AllAppointments() {
                           <p className="font-medium">
                             Symptoms: <span>{appointment.symptoms}</span>
                           </p>
-                          <p className="font-medium">
+                          {/* <p className="font-medium">
                             Additional Details:{" "}
                             <span>
                               {appointment.details ||
                                 "No additional details provided."}
                             </span>
-                          </p>
+                          </p> */}
                         </div>
 
                         {/* Assigned Doctor And Fee */}
