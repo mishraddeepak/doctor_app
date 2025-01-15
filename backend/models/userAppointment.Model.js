@@ -1,5 +1,5 @@
 const mongoose = require("mongoose");
-const doctorModel = require('./doctorModel')
+
 const appointmentSchema = new mongoose.Schema({
     doctor: { 
         type: mongoose.Schema.Types.ObjectId, 
@@ -61,7 +61,6 @@ const userProfileSchema = new mongoose.Schema(
         gender: { type: String, required: true },
         dob: { type: Date, required: true },
         uploadedFiles: [{fileName: String,filePath: String,},],
-        appointments: [appointmentSchema], // Array of appointments linked to the user
     },
     { timestamps: true }
 );

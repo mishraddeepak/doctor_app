@@ -3,7 +3,7 @@ const fs = require('fs')
 const path = require('path');
 const mongoose = require('mongoose');
 
-
+const Appointment = require('../models/appointmentModel')
 
 const createUserProfile = async (req, res) => {
     try {
@@ -198,43 +198,62 @@ const deleteUserFile = async (req, res) => {
 
 // Controller to book an appointment for a user
 const bookAppointment = async (req, res) => {
-
+    console.log("hiii")
     try {
-        const { userID, doctorId, slotTime, symptoms, uploadedFiles, selectedDate } = req.body;
-        console.log(userID)
+      // Extract data from the request body
+      const {
+        userID,
+        doctorId,
+        selectedDate,
+        slotTime,
+        docFee,
+        docName,
+        patientId,
+        patientName,
+        symptoms,
+        instruction,
+        uploadedFiles,
+      } = req.body;
+  
+      console.log("User ID:", userID);
+  
+      // Find the user by userID
+      const user = await UserProfile.findById(userID);
 
-        // Find the user by userID
-        const user = await UserProfile.findById(userID);
-
-        if (!user) {
-            return res.status(404).json({ message: "User profile not found" });
-        }
-
-        // Create a new appointment object
-        const newAppointment = {
-            doctorId,
-            selectedDate,
-            slotTime,
-            symptoms,
-            uploadedFiles: uploadedFiles || [], // Optional, default to empty array
-            bookedAt: new Date(), // Automatically sets the booking time to now
-        };
-
-        // Add the new appointment to the user's appointments array
-        user.appointments.push(newAppointment);
-
-        // Save the updated user document
-        const updatedUser = await user.save();
-
-        res.status(200).json({
-            message: "Appointment booked successfully",
-            data: updatedUser,
-        });
+      if (!user) {
+        return res.status(404).json({ message: "User profile not found" });
+      }
+  
+      // Create a new appointment object instance
+      const newAppointment = new Appointment({
+        doctorId,
+        selectedDate,
+        slotTime,
+        docFee,
+        docName,
+        patientId,
+        patientName,
+        symptoms,
+        instruction,
+        uploadedFiles: uploadedFiles || [], 
+        bookedAt: new Date(), 
+      });
+      console.log(newAppointment)
+  
+      // Save the new appointment to the database
+      const savedAppointment = await newAppointment.save();
+      console.log("Saved Appointment:", savedAppointment);
+  
+      res.status(200).json({
+        message: "Appointment booked successfully",
+        data: savedAppointment, 
+      });
     } catch (error) {
-        console.error("Error booking appointment:", error);
-        res.status(500).json({ message: "Error booking appointment", error });
+      console.error("Error booking appointment:", error);
+      res.status(500).json({ message: "Error booking appointment", error });
     }
-};
+  };
+  
 
 module.exports = {
     createUserProfile,

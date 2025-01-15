@@ -156,7 +156,11 @@ export default function Navbar() {
 console.log(adminUrl)
   return (
     <div className="flex items-center justify-between text-sm py-4 mb-5 border-b border-b-gray-400 ">
-      <img className="w-44 cursor-pointer" src={assets.logo} alt="" />
+      {/* <img className="w-44 cursor-pointer" src={assets.logo} alt="" /> */}
+      <div className="w-44 cursor-pointer text-3xl font-semibold text-blue-500">
+    MediHome
+</div>
+
       <ul className="hidden md:flex item-start gap-5 font-medium">
         <NavLink to="/">
           <li className="py-1 ">HOME</li>
@@ -241,7 +245,11 @@ console.log(adminUrl)
           } md:hidden right-0 top-0 bottom-0 z-20 overflow-hidden bg-white transition-all `}
         >
           <div className="flex items-center justify-between px-5 py-6">
-            <img className="w-36" src={assets.logo} alt="" />
+            {/* <img className="w-36" src={assets.logo} alt="" /> */}
+            <div className="w-44 cursor-pointer text-3xl font-semibold text-blue-500">
+    MediHome
+</div>
+
             <img
               className="w-7"
               onClick={() => setShoMenu(false)}

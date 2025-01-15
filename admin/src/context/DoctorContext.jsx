@@ -1,8 +1,8 @@
 import {createContext, useState} from 'react'
-export const DoctorContext = createContext()
+
 import axios from 'axios'
 import {toast} from 'react-toastify'
-
+export const DoctorContext = createContext()
 export default function DoctorContextProvider(props) {
   const[docProfile,setDocProfile] = useState([])
   const backendUrl = import.meta.env.VITE_BACKEND_URL

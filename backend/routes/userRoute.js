@@ -13,14 +13,14 @@ userRouter.post('/register', registerUser)
 userRouter.post('/login', loginUser)
 // Booking the appoint ment for the user based upon the userID or _.id
 userRouter.post('/book-appointment/:userID',  upload.none(), bookAppointment)
+// userRouter.post('/book-appointment/:userID',  (req,res)=>{
+//   console.log("hii")
+// })
+ 
 // after the login updating the profile with submission of the reports
 userRouter.post('/update-profile', uploadFiles, createUserProfile)
-
-
 // deleting the report submitted
 userRouter.delete('/information/delete/:userID', deleteUserFile)
-
-
 userRouter.get('/profile/:userID', getUserByID)
 userRouter.get('/information/:userID',  getUserProfile)
 
