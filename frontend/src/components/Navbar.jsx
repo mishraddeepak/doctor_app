@@ -117,22 +117,18 @@
 //             <NavLink onClick={() => setShoMenu(false)} to="/contact">
 //               <p className="px-4 py-2 rounded  inline-block ">Contact</p>
 //             </NavLink>
-//             <NavLink className="bg-primary text-white px-8 py-3 rounded-full font-light" 
+//             <NavLink className="bg-primary text-white px-8 py-3 rounded-full font-light"
 //             onClick={() =>{token?logout():setShoMenu(false)} } to='/login'
 //            >
 //             <p  >{token?'Log out':'Create account'}</p>
 //             </NavLink>
-           
+
 //           </ul>
 //         </div>
 //       </div>
 //     </div>
 //   );
 // }
-
-
-
-
 
 import React, { useContext, useState } from "react";
 import { assets } from "../assets/assets";
@@ -143,23 +139,21 @@ import { toast } from "react-toastify";
 export default function Navbar() {
   const navigate = useNavigate();
   const [showMenu, setShoMenu] = useState(false);
-  const { token, setToken,adminUrl, userID, setUserID } = useContext(AppContext);
+  const { token,setToken, userObj, adminUrl,} =
+    useContext(AppContext);
 
   const logout = () => {
-    setToken(false);
-    setUserID("");
-    localStorage.removeItem("userID");
-    localStorage.removeItem("token");
+    setToken(false)
     toast.success("Logged out successfully");
     navigate("/");
   };
-console.log(adminUrl)
+  console.log(adminUrl);
   return (
     <div className="flex items-center justify-between text-sm py-4 mb-5 border-b border-b-gray-400 ">
       {/* <img className="w-44 cursor-pointer" src={assets.logo} alt="" /> */}
       <div className="w-44 cursor-pointer text-3xl font-semibold text-blue-500">
-    MediHome
-</div>
+        MediHome
+      </div>
 
       <ul className="hidden md:flex item-start gap-5 font-medium">
         <NavLink to="/">
@@ -225,8 +219,8 @@ console.log(adminUrl)
 
             {/* Admin/Doctor Button */}
             <button
-             onClick={() => window.open(adminUrl, "_self")}
-             className="border border-primary text-primary bg-transparent px-3 py-1 rounded-full font-light text-xs hidden md:block"
+              onClick={() => window.open(adminUrl, "_self")}
+              className="border border-primary text-primary bg-transparent px-3 py-1 rounded-full font-light text-xs hidden md:block"
             >
               Admin/Doctor
             </button>
@@ -247,8 +241,8 @@ console.log(adminUrl)
           <div className="flex items-center justify-between px-5 py-6">
             {/* <img className="w-36" src={assets.logo} alt="" /> */}
             <div className="w-44 cursor-pointer text-3xl font-semibold text-blue-500">
-    MediHome
-</div>
+              MediHome
+            </div>
 
             <img
               className="w-7"
@@ -294,4 +288,3 @@ console.log(adminUrl)
     </div>
   );
 }
-

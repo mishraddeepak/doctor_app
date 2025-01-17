@@ -1,69 +1,44 @@
 import React, { useContext, useEffect, useState } from "react";
 import { AppContext } from "../context/AppContext";
-import axios from "axios";
 import { toast } from "react-toastify";
 import {  useNavigate } from "react-router-dom";
 
 export default function Login() {
-  const { backendUrl, token, setToken,userID,setUserID } = useContext(AppContext);
+  const {registerUser,loginUser,token,setToken,userObj, } = useContext(AppContext);
   const [state, setState] = useState("Sign Up");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [name, setName] = useState("");
 
- 
 const navigate = useNavigate()
   const submitHandler = async (event) => {
     event.preventDefault();
     try {
       if (state === "Sign Up") {
-        const { data } = await axios.post(`${backendUrl}/api/user/register`, {
+        const userData = {
           name,
           email,
-          password,
-        });
-        if (data.success) {
-          localStorage.setItem("token", data.token);
-          localStorage.setItem('userID',data.userID)
-          setToken(data.token);
-         setUserID(data.userID)
-          toast.success("Account created successfully!");
-         
-        } else {
-          toast.error(data.message);
+          password
         }
+        registerUser(userData)
       } else {
-        const {data}  = await axios.post(`${backendUrl}/api/user/login`, {
+        const userData = {
           email,
-          password,
-        });
-        if (data.success){
-          localStorage.setItem("token", data.token);
-        localStorage.setItem('userID',data.userID)
-          setToken(data.token);
-          
-          toast.success("Logged in successfully!");
-        } else {
-          toast.error(data.message);
+          password
         }
+        loginUser(userData) 
       }
     } catch (error) {
       toast.error(error.response?.data?.message || "An error occurred");
     }
   };
-  useEffect(() => {
-    const storedUserID = localStorage.getItem('userID');
-    if (storedUserID) {
-      setUserID(storedUserID); // Update state with the stored userID from localStorage
-    }
-  }, [userID]);
   useEffect(()=>{
     if(token){
       navigate('/')
+    } else{
+      setToken(false)
     }
-    
   },[token])
-
   return (
     <form onSubmit={submitHandler} className="min-h-[80vh] flex items-center">
       <div className="flex flex-col gap-3 m-auto items-start p-8 min-w-[340px] sm:min-w-96 border rounded-xl text-zinc-600 text-sm shadow-lg">

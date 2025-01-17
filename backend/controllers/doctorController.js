@@ -1,6 +1,6 @@
 
 const Doctor = require('../models/doctorModel');
-const UserProfile = require('../models/userAppointment.Model');
+// const UserProfile = require('../models/userAppointment.Model');
 const doctorModel = require('../models/doctorModel')
 const bcrypt = require('bcrypt')
 const jwt = require('jsonwebtoken')

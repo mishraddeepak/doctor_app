@@ -1,15 +1,26 @@
-const mongoose = require('mongoose')
+const mongoose = require("mongoose");
 
-const userSchema = new mongoose.Schema({
-    name:{type:String,required:true},
-    email:{type:String,required:true,unique:true},
-    password:{type:String,required:true},
-    image:{type:String,default:''},
-    address:{type:Object,default:{line1:'',line2:''}},
-   gender:{type:String,default:'Not Selected'},
-   dob:{type:String,default:'Not Selected'},
-   phone:{type:String,default:'0000000'},
-})
 
-const userModel = mongoose.models.user||mongoose.model('user',userSchema)
-module.exports=userModel
+const userProfileSchema = new mongoose.Schema(
+    {   name: { type: String, required: true },
+        email: { type: String, required: true, },
+        password:{type:String,required:true},
+        phone: { type: String, unique:true },
+        image: { type: String },
+        address: {line1: { type: String,  },line2: { type: String },},
+        gender: { type: String,  },
+        dob: { type: Date },
+        uploadedFiles: [{fileName: String,filePath: String,},],
+        appointments: [
+            {
+                type: mongoose.Schema.Types.ObjectId, 
+                ref: "Appointment",
+            },
+        ],
+    },
+    { timestamps: true }
+);
+
+const userModel = mongoose.model("User", userProfileSchema);
+
+module.exports = userModel;

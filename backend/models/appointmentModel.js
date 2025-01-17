@@ -26,11 +26,11 @@ const appointmentSchema = new mongoose.Schema({
   },
   docName: {
     type: String,
-    required: true,
+    required: false,
   },
   docFee: {
     type: String,
-    required: true,
+    required: false,
   },
   patientId: {
     type: mongoose.Schema.Types.ObjectId,
@@ -69,6 +69,6 @@ const appointmentSchema = new mongoose.Schema({
   },
 }, { timestamps: true }); 
 
-const Appointment = mongoose.model('Appointment', appointmentSchema);
+const appointmentModel = mongoose.model('Appointment', appointmentSchema);
 
-module.exports = Appointment;
+module.exports = appointmentModel;

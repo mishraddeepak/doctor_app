@@ -1,28 +1,35 @@
-const express = require('express')
-const { registerUser, loginUser, getUserByID } = require('../controllers/userController')
-const { createUserProfile, bookAppointment, getUserProfile, deleteUserFile, updateUserProfile }
-    = require('../controllers/userAppointmentController')
-const UserProfile = require('../models/userAppointment.Model')
+const express = require('express');
+const userRouter = express.Router();
+// const { registerUser, loginUser, getUserByID } = require('../controllers/userController')
+// const { createUserProfile, bookAppointment, getUserProfile, deleteUserFile, updateUserProfile }
+    // = require('../controllers/userController')
+// const UserProfile = require('../models/userModel')
+// new handlers
+const userHandler= require('../controllers/userController')
+
+
 const multer = require('multer');
 const upload = multer();
 const { uploadFiles, verifyToken } = require('../middlewares/multer');
-const userRouter = express.Router()
+
 // Registering the user
-userRouter.post('/register', registerUser)
+userRouter.post('/register', userHandler.registerUser)
+userRouter.post('/login', userHandler.loginUser)
+userRouter.post('/update-profile', uploadFiles, userHandler.editUserProfile)
+
+userRouter.post('/book-appointment',  upload.none(), userHandler.bookAppointment)
 // logging in user
-userRouter.post('/login', loginUser)
+
 // Booking the appoint ment for the user based upon the userID or _.id
-userRouter.post('/book-appointment/:userID',  upload.none(), bookAppointment)
-// userRouter.post('/book-appointment/:userID',  (req,res)=>{
-//   console.log("hii")
-// })
- 
+
+
 // after the login updating the profile with submission of the reports
-userRouter.post('/update-profile', uploadFiles, createUserProfile)
+// userRouter.post('/update-profile', uploadFiles, createUserProfile)
 // deleting the report submitted
-userRouter.delete('/information/delete/:userID', deleteUserFile)
-userRouter.get('/profile/:userID', getUserByID)
-userRouter.get('/information/:userID',  getUserProfile)
+
+// userRouter.delete('/information/delete/:userID', deleteUserFile)
+// userRouter.get('/profile/:userID', getUserByID)
+// userRouter.get('/information/:userID',  getUserProfile)
 
 
 

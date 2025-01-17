@@ -1,7 +1,7 @@
 const dotenv = require("dotenv");
 const jwt = require("jsonwebtoken");
 const doctorModel = require('../models/doctorModel')
-const UserProfile = require('../models/userAppointment.Model')
+
 const bcrypt = require("bcrypt");
 const path = require("path");
 const cloudinary = require("cloudinary").v2; // For image upload, if using cloudinary

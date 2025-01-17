@@ -5,101 +5,32 @@ import { AppContext } from "../context/AppContext";
 import { toast } from "react-toastify";
 
 export default function MyProfile() {
-  const { token, backendUrl, setToken, userID } = useContext(AppContext);
+  const { token,userObj,backendUrl,setUserObj, setToken } = useContext(AppContext);
   const [isEdit, setIsEdit] = useState(false);
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState("");
   const [uploadedFiles, setUploadedFiles] = useState([]);
   const [files, setFiles] = useState([]);
   const [info, setInfo] = useState({
-    name: "",
-    email: "",
+    name: userObj.name,
+    email: userObj.email,
   });
+ 
   const [userData, setUserData] = useState({
-    userID: userID,
+    
     name: info.name,
     email: info.email,
     image: assets.profile_pic,
-    phone: "00000",
+    phone: userObj.phone||"00000",
     address: {
-      line1: "skmxkasxmds ",
-      line2: "smx  skks",
+      line1: userObj.address.line1|| "Address Line-1 ",
+      line2: userObj.address.line2|| "Address Line-2",
     },
-    gender: "Male",
-    dob: "2000-01-20",
+    gender: userObj.gender||"Male",
+    dob:userObj.dob|| "2000-01-20",
     uploadedFiles: uploadedFiles,
   });
-  // initial fetching
-  useEffect(() => {
-    const initialFetching = async (req, res) => {
-      try {
-        const updatedResponse = await axios.get(
-          `${backendUrl}/api/user/information/${userID}`,
-          {
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
-          }
-        );
-        console.log(updatedResponse.data)
-        setFiles(updatedResponse.data.data.uploadedFiles);
-        setUserData({
-          userID: userID,
-          name: info.name,
-          email: info.email,
-          image: assets.profile_pic,
-          phone: updatedResponse.data.data.phone || "2948293",
-          address: {
-            line1: updatedResponse.data.data.address.line1,
-            line2: updatedResponse.data.data.address.line2,
-          },
-          gender: updatedResponse.data.data.gender,
-          dob: updatedResponse.data.data.dob.split("T")[0],
-       
-        });
-      } catch (error) {}
-    };
-    initialFetching();
-  }, []);
-  
-  useEffect(() => {
-    const fetchUserData = async () => {
-      try {
-        setLoading(true);
-        
-        const response = await axios.get(
-          `${backendUrl}/api/user/profile/${userID}`,
-          {
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
-          }
-        );
-
-        if (response.data) {
-          setInfo({
-            name: response.data.name || "",
-            email: response.data.email || "",
-          });
-        } // Update the info state directly
-        setLoading(false);
-      } catch (error) {
-        setLoading(false);
-        setMessage("Failed to fetch profile data.");
-        console.error(error);
-      }
-    };
-
-    fetchUserData();
-  }, [backendUrl, userID, token, info.name]); // Dependencies ensure the effect runs when these values change
-  useEffect(() => {
-    // Synchronize info changes to userData for editing
-    setUserData((prev) => ({
-      ...prev,
-      name: info.name,
-      email: info.email,
-    }));
-  }, [info]);
+ 
   // handele report deete
   const handleDeleteFile = async (index, fileId) => {
     try {
@@ -155,7 +86,7 @@ export default function MyProfile() {
       for (const [key, value] of uploadedFiles.entries()) {
         console.log(`${key}:`, value);
       }
-      
+      console.log("formData",formData)
       const {data} = await axios.post(
         `${backendUrl}/api/user/update-profile`,
         formData,
@@ -166,7 +97,7 @@ export default function MyProfile() {
           },
         }
       );
-      console.log("hiii",data)
+      console.log("hiii",data.data)
       if(data.success){
         toast.success(data.message)
       }
@@ -177,40 +108,30 @@ export default function MyProfile() {
       setMessage("Profile updated successfully!");
       setIsEdit(false);
       // Optionally refetch updated data
-      const updatedResponse = await axios.get(
-        `${backendUrl}/api/user/information/${userID}`,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
+     
 
-      setFiles(updatedResponse.data.data.uploadedFiles);
+      setFiles(data.data.uploadedFiles);
       setUserData({
-        userID: userID,
         name: info.name,
         email: info.email,
         image: assets.profile_pic,
-        phone: updatedResponse.data.data.phone || "2948293",
+        phone: data.data.phone || "2948293",
         address: {
-          line1: updatedResponse.data.data.address.line1,
-          line2: updatedResponse.data.data.address.line2,
+          line1: data.data.address.line1,
+          line2: data.data.address.line2,
         },
-        gender: updatedResponse.data.data.gender,
-        dob: updatedResponse.data.data.dob.split("T")[0],
+        gender: data.data.gender,
+        dob: data.data.dob.split("T")[0],
         uploadedFiles: [],
       });
+      setUserObj(userData)
     } catch (error) {
       setLoading(false);
       setMessage("Failed to update profile. Please try again.");
       console.error(error);
     }
   };
-  useEffect(() => {
-    
-  }, [info]);
-  console.log("kmdkcmm...", files);
+ 
   return (
     <div
       key={info.name + info.email}

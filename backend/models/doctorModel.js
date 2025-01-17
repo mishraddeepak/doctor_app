@@ -1,39 +1,4 @@
 const mongoose = require("mongoose");
-const UserProfile=require('./userAppointment.Model')
-// const appointmentSchema = new mongoose.Schema({
-//   patientId: { 
-//     type: mongoose.Schema.Types.ObjectId, 
-//     ref: "UserProfile", // Reference to the Patient model 
-//     required: true 
-//   },
-//   appointmentId: { 
-//     type: mongoose.Schema.Types.ObjectId, 
-//     required: true 
-//   },
-//   patientReports:  [
-//     {
-//       fileId: {type:String},
-//       fileType: { 
-//         type: String, 
-//         enum: ["audio", "video", "pdf", "image"], // Allowed types
-       
-//       },
-//       filePath: { 
-//         type: String, // Path or URL to the file
-        
-//       },
-//       description: { 
-//         type: String, // Optional description of the report
-//         default: "No description provided" 
-//       },
-//       uploadedAt: { 
-//         type: Date, 
-//         default: Date.now // Automatically set the upload timestamp
-//       }
-//     }
-//   ]
-// }, { timestamps: true });
-
 
 const doctorSchema = new mongoose.Schema({
   name: { type: String, required: true },
@@ -47,12 +12,16 @@ const doctorSchema = new mongoose.Schema({
   isHeadDoctor: { type: Boolean, default: false },
   address1: { type: String, required: true },
   address2: { type: String },
-  docImg: { type: String }, 
-  
+  docImg: { type: String },
+  appointments: [{
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "Appointment",
+  }]
+
 }, {
-  timestamps: true, 
+  timestamps: true,
 });
 
-const doctorModel= mongoose.model("Doctor", doctorSchema);
+const doctorModel = mongoose.model("Doctor", doctorSchema);
 
-module.exports=doctorModel 
+module.exports = doctorModel 
