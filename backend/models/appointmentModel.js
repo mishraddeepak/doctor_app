@@ -34,7 +34,7 @@ const appointmentSchema = new mongoose.Schema({
   },
   patientId: {
     type: mongoose.Schema.Types.ObjectId,
-    ref:"UserProfile",
+    ref:"User",
   },
   patientName: {
     type: String,
